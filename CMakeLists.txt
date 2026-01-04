@@ -56,6 +56,7 @@ add_executable(${PROJECT}
 		SegmentSequenceProvider.hpp
 		NumberIntervalProvider.hpp
 		ColourHSVProvider.hpp
+		NumberSineProvider.hpp
 		)
 
 target_link_libraries(${PROJECT}

@@ -49,10 +49,9 @@ namespace Lights
 			ApplyCommonItemParameters(definedAction);
 			definedAction->Provider((ColourProvider *)(storage.ItemColourProvider));
 
-			// Get the pixel number from the optional provider
-			definedAction->PixelProvider((storage.StartLedProvider == nullptr)
-											 ? new NumberProvider(0)
-											 : (NumberProvider *)(storage.StartLedProvider));
+			// Get the pixel number from the optional provider. Leave the PixelProvider as null if
+			// no  number is specified
+			definedAction->PixelProvider((NumberProvider *)storage.StartLedProvider );
 
 			StoreObject(definedAction, "SetAction");
 		}

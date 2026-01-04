@@ -11,6 +11,7 @@
 #include "SegmentSequenceProvider.hpp"
 #include "NumberIntervalProvider.hpp"
 #include "ColourHSVProvider.hpp"
+#include "NumberSineProvider.hpp"
 
 using namespace std;
 
@@ -166,6 +167,17 @@ namespace Lights
 						( NumberProvider*) storage.SatProvider, ( NumberProvider*) storage.ValueProvider),
 						"ColourHSVProvider");
 		}
+	}
+
+	/// @brief Create and store a NumberSineProvider instance
+	/// @param tokens
+	/// @return
+	void ObjectParsers::MakeNumberSineProvider()
+	{
+		// The step is optional
+		uint step = GetStoredNumber(1, storage.IntervalProvider);
+
+		StoreObject(new NumberSineProvider( step ), "NumberSineProvider");
 	}
 
 	/// @brief Make a SegmentSequenceProvider from the ParameterStorage

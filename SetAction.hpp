@@ -29,7 +29,12 @@ namespace Lights
 	protected:
 		/// @brief Set the pixel to the colour given by the provider
 		/// @param count
-		inline void Execute() { itemSegment->Value()->SetPixelColour(numberProvider->Value(), actionColourProvider->Value()); }
+		inline void Execute() 
+		{ 
+			// If there is no numberProvider then use the current cycle number provided by the containing block
+			itemSegment->Value()->SetPixelColour( ( numberProvider != nullptr) ? numberProvider->Value() : stepCount, 
+				actionColourProvider->Value()); 
+		}
 
 	private:
 		/// @brief A NumberProvider used to provide the pixel number

@@ -31,6 +31,7 @@ namespace Lights
 		parserMap.emplace("randomNumber", &ObjectParsers::MakeRandomNumberProvider);
 		parserMap.emplace("randomNumberSet", &ObjectParsers::MakeRandomNumberSetProvider);
 		parserMap.emplace("numberInterval", &ObjectParsers::MakeNumberIntervalProvider);
+		parserMap.emplace("sineSequence", &ObjectParsers::MakeNumberSineProvider);
 		parserMap.emplace("fill", &ObjectParsers::MakeFillAction);
 		parserMap.emplace("set", &ObjectParsers::MakeSetAction);
 		parserMap.emplace("cycle", &ObjectParsers::MakeCycleAction);

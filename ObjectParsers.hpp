@@ -43,6 +43,7 @@ namespace Lights
 		void MakeRandomNumberProvider();
 		void MakeRandomNumberSetProvider();
 		void MakeNumberIntervalProvider();
+		void MakeNumberSineProvider();
 		void MakeFillAction();
 		void MakeSetAction();
 		void MakeShiftAction();
