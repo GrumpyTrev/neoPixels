@@ -44,7 +44,6 @@ namespace Lights
 		void MakeRandomNumberSetProvider();
 		void MakeNumberIntervalProvider();
 		void MakeNumberSineProvider();
-		void MakeFillAction();
 		void MakeSetAction();
 		void MakeShiftAction();
 		void MakeCycleAction();

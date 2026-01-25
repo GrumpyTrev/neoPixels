@@ -31,9 +31,20 @@ namespace Lights
 		/// @param count
 		inline void Execute() 
 		{ 
-			// If there is no numberProvider then use the current cycle number provided by the containing block
-			itemSegment->Value()->SetPixelColour( ( numberProvider != nullptr) ? numberProvider->Value() : stepCount, 
-				actionColourProvider->Value()); 
+			// If there is no numberProvider then fill all the pixels in the sequence.
+			if ( numberProvider == nullptr )
+			{
+				// Don't use Fill here as we want to call the colour provider for each pixel
+				Lights::Segment* segment = itemSegment->Value();
+				for ( int index = 0; index < segment->NumLeds(); index++ )
+				{
+					segment->SetPixelColour( index, actionColourProvider->Value() );
+				}
+			}
+			else
+			{
+				itemSegment->Value()->SetPixelColour( numberProvider->Value(), actionColourProvider->Value() );
+			}
 		}
 
 	private:

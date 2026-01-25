@@ -2,7 +2,6 @@
 #include "ObjectParsers.hpp"
 #include "ObjectStore.hpp"
 #include "Action.hpp"
-#include "FillAction.hpp"
 #include "SetAction.hpp"
 #include "ShiftAction.hpp"
 #include "CycleAction.hpp"
@@ -13,26 +12,6 @@ using namespace std;
 
 namespace Lights
 {
-	/// @brief Parse a FillAction definition
-	/// @param tokens
-	/// @return
-	void ObjectParsers::MakeFillAction()
-	{
-		FillAction *definedAction = new FillAction();
-
-		// Check for fill colour parameter
-		if (storage.ItemColourProvider == nullptr)
-		{
-			errorStream << "No colour for FillAction " << storage.Name;
-		}
-		else
-		{
-			ApplyCommonItemParameters(definedAction);
-			definedAction->Provider((ColourProvider *)(storage.ItemColourProvider));
-			StoreObject(definedAction, "FillAction");
-		}
-	};
-
 	/// @brief Parse a SetAction definition
 	/// @param tokens
 	/// @return
