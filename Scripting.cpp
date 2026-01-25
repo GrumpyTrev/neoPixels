@@ -6,13 +6,18 @@ namespace Lights
 {
 	vector<string> Scripting::builtInScript = {"segment fullSegment", "#t on"};
 	vector<string> Scripting::defaultScript =
-		{
-			"colourSequence provider White Green",
-			"fill fillColour type=sequential delay=1000 colour=provider",
-			"fill fillBlack type=sequential delay=1000 colour=Black",
-			"cycle cycler type=parallel provider",
-			"block fillBlock1 count=5 segment=fullSegment cycler fillColour fillBlack",
-			"x fillBlock1",
+	{
+		"fade fadeBy10 fadeBy=90",
+		"randomNumber ledSelector minimum=0 maximum=50",
+		"randomNumber hueSelector minimum=0 maximum=65535",
+		"randomNumber valueSelector minimum=192 maximum=256",
+		"colourHSV hsvProvider hue=hueSelector sat=255 value=valueSelector",
+		"set setLed colour=hsvProvider startLed=ledSelector",
+		"cycle colourCycler hueSelector valueSelector hsvProvider ledSelector",
+		"block fader fadeBy10",
+		"block setter count=2 colourCycler setLed",
+		"block effect5 delay=50 fader setter",
+		"x effect5",
 	};
 
 	deque<string> Scripting::activeScript;
