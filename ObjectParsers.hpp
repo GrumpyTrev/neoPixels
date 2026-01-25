@@ -49,6 +49,7 @@ namespace Lights
 		void MakeShiftAction();
 		void MakeCycleAction();
 		void MakeBlock();
+		void MakeFadeAction();
 
 		/// @brief Command processing methods
 		void BrightnessCommand();

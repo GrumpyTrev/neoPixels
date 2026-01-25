@@ -5,6 +5,20 @@
 
 namespace Lights
 {
+	/// @brief Structure to hold the HSV components of a colour
+	struct HSVColour
+	{
+		uint16_t hue;
+		uint8_t saturation;
+		uint8_t value;
+
+		// Create HSVColour from component values
+		inline HSVColour(uint16_t hueIn, uint8_t saturationIn, uint8_t valueIn) :
+			hue(hueIn), saturation(saturationIn), value(valueIn) {}
+
+		inline HSVColour() {}
+	};
+
 	struct Colour
 	{
 		union
@@ -40,6 +54,8 @@ namespace Lights
 		static void AddColour(std::string colourName, Colour colourToAdd);
 
 		static Colour ColourHSV(uint16_t hue, uint8_t sat, uint8_t val);
+
+		HSVColour ToHSV();
 
 		static inline uint8_t Gamma8(uint8_t x) { return GammaTable[x]; }
 

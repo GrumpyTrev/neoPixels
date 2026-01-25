@@ -15,7 +15,7 @@ namespace Lights
 		/// @brief Supply the next colour
 		inline virtual void Next()
 		{
-			SetValue(AnimationHelper::Random8(minimum, maximum));
+			SetValue(AnimationHelper::Random16(minimum, maximum));
 			// cout << "Setting random number to " << Value() << "\n";
 		}
 

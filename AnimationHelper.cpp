@@ -79,6 +79,21 @@ namespace Lights
 		return randomSeed16;
 	}
 
+	/// Generate an 8-bit random number between 0 and lim
+	/// @param lim the upper bound for the result, exclusive
+	uint16_t AnimationHelper::Random16(uint16_t lim)
+	{
+		return (Random16() * lim) >> 16;
+	}
+
+	/// Generate an 16-bit random number in the given range
+	/// @param min the lower bound for the random number, inclusive
+	/// @param lim the upper bound for the random number, exclusive
+	uint16_t AnimationHelper::Random16(uint16_t min, uint16_t lim)
+	{
+		return Random16(lim - min) + min;
+	}
+
 	void AnimationHelper::Random16AddEntropy(uint16_t entropy)
 	{
 		randomSeed16 += entropy;

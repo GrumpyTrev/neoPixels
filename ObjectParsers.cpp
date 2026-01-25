@@ -36,6 +36,7 @@ namespace Lights
 		parserMap.emplace("set", &ObjectParsers::MakeSetAction);
 		parserMap.emplace("cycle", &ObjectParsers::MakeCycleAction);
 		parserMap.emplace("shift", &ObjectParsers::MakeShiftAction);
+		parserMap.emplace("fade", &ObjectParsers::MakeFadeAction);
 		parserMap.emplace("block", &ObjectParsers::MakeBlock);
 
 		// Initialise the command name to processing method map
@@ -62,6 +63,7 @@ namespace Lights
 		parameterParseMap.emplace("hue", MakeParseData(NumberParameter, storage.HueProvider));
 		parameterParseMap.emplace("sat", MakeParseData(NumberParameter, storage.SatProvider));
 		parameterParseMap.emplace("value", MakeParseData(NumberParameter, storage.ValueProvider));
+		parameterParseMap.emplace("fadeBy", MakeParseData(NumberParameter, storage.IntervalProvider));
 	}
 
 	/// @brief Find a parser for the specified type and run it
@@ -72,7 +74,7 @@ namespace Lights
 		bool found = false;
 
 		// Look for commands first
-		map<string, ObjectParsers::DefinitionParser>::iterator it = commandMap.find(typeName);
+		map<string, DefinitionParser>::iterator it = commandMap.find(typeName);
 		if (it != commandMap.end())
 		{
 			found = true;
@@ -317,11 +319,11 @@ namespace Lights
 		}
 		else if (parseData.Type == SegmentParameter)
 		{
-			// Look for a SequenceProvider
+			// Look for a SegmentProvider
 			SegmentProvider *parsedObject = dynamic_cast<SegmentProvider *>(objectStorage.GetObject(value));
 			if (parsedObject == nullptr)
 			{
-				errorStream << value << " is not a SequenceProvider";
+				errorStream << value << " is not a SegmentProvider";
 			}
 			else
 			{

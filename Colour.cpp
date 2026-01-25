@@ -155,6 +155,44 @@ namespace Lights
 					  (((((b * s1) >> 8) + s2) * v1) >> 8));
 	}
 
+	/// @brief Convert this colour to its HSV representation
+	/// @return 
+	HSVColour Colour::ToHSV()
+	{
+		HSVColour hsv;
+
+		uint8_t rgbMin = component.red < component.green ? (component.red < component.blue ? component.red : component.blue) :
+		 	(component.green < component.blue ? component.green : component.blue);
+		uint8_t rgbMax = component.red > component.green ? (component.red > component.blue ? component.red : component.blue) :
+			(component.green > component.blue ? component.green : component.blue);
+
+		hsv.value = rgbMax;
+		if (hsv.value == 0)
+		{
+			hsv.hue = 0;
+			hsv.saturation = 0;
+		}
+		else
+		{
+			hsv.saturation = ( 255 * static_cast<uint16_t>(rgbMax - rgbMin) ) / hsv.value;
+			if (hsv.saturation == 0)
+			{
+				hsv.hue = 0;
+			}
+			else
+			{
+				// The magic numbers here are 65535/3(*1 and *2) and 65535/6
+				if (rgbMax == component.red)
+					hsv.hue = 10922 * static_cast<int>(component.green - component.blue) / (rgbMax - rgbMin);
+				else if (rgbMax == component.green)
+					hsv.hue = 21845 + 10922 * static_cast<int>(component.blue - component.red) / (rgbMax - rgbMin);
+				else
+					hsv.hue = 43690 + 10922 * static_cast<int>(component.red - component.green) / (rgbMax - rgbMin);
+			}
+		}
+		return hsv;
+	}
+
 	// A 32-bit variant of gamma8() that applies the same function
 	// to all components of a packed RGB or WRGB value.
 	uint32_t Colour::Gamma32(uint32_t rgbValue)

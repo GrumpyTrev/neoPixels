@@ -57,6 +57,7 @@ add_executable(${PROJECT}
 		NumberIntervalProvider.hpp
 		ColourHSVProvider.hpp
 		NumberSineProvider.hpp
+		FadeAction.hpp
 		)
 
 target_link_libraries(${PROJECT}

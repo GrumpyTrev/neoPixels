@@ -7,6 +7,7 @@
 #include "ShiftAction.hpp"
 #include "CycleAction.hpp"
 #include "Block.hpp"
+#include "FadeAction.hpp"
 
 using namespace std;
 
@@ -92,6 +93,27 @@ namespace Lights
 			errorStream << "Either no providers or invalid providers for CycleAction " << storage.Name;
 		}
 	}
+
+	/// @brief Parse a FadeAction definition
+	/// @param tokens
+	/// @return
+	void ObjectParsers::MakeFadeAction()
+	{
+		FadeAction *definedAction = new FadeAction();
+
+		// Check for fade percentage parameter (stored in the IntervalProvider)
+		if (storage.IntervalProvider == nullptr)
+		{
+			errorStream << "No fade percentage for FadeAction " << storage.Name;
+		}
+		else
+		{
+			ApplyCommonItemParameters(definedAction);
+
+			definedAction->Percentage( ( (NumberProvider *)storage.IntervalProvider )->GetValue());
+			StoreObject(definedAction, "FadeAction");
+		}
+	};
 
 	/// @brief Parse a Block definition
 	/// @param tokens
