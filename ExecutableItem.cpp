@@ -23,6 +23,7 @@ namespace Lights
 		counter = rhs.counter;
 		itemSynch = rhs.itemSynch;
 		itemSegment = rhs.itemSegment;
+		defaultSegment = rhs.defaultSegment;
 	}
 
 	/// @brief Initialise the Item prior to execution
@@ -40,11 +41,10 @@ namespace Lights
 			timeLimit = delayed_by_ms(get_absolute_time(), executionTimer->Value());
 		}
 
-		// If an LedSequence has been supplied then save it as the sequence for this item to use
-		if (sequenceToApply != nullptr)
-		{
-			itemSegment = sequenceToApply;
-		}
+		// If a segment has been supplied by the containing block then save it as the segment for this item to use
+		// Otherwise if a segment has been configured for this item use it, otherwise use the default segment
+		itemSegment = ( sequenceToApply != nullptr ) ? sequenceToApply :
+			( itemSegment != nullptr ) ? itemSegment : defaultSegment;
 
 		// Allow derived classes to initialise themselves
 		InitialiseItem();

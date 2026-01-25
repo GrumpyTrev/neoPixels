@@ -76,6 +76,10 @@ namespace Lights
 		inline SegmentProvider *Segment() { return itemSegment; }
 		inline void Segment(SegmentProvider *sequenceToUse) { itemSegment = sequenceToUse; }
 
+		/// @brief Set the segment to use if non made explicit
+		/// @param segment 
+		inline void DefaultSegment( SegmentProvider* segment ) { defaultSegment = segment; }
+
 	protected:
 		/// @brief Specific initialisation required for all derived classes
 		virtual void InitialiseItem() = 0;
@@ -105,6 +109,9 @@ namespace Lights
 
 		/// @brief The SegmentProvider used by the Item
 		SegmentProvider *itemSegment = nullptr;
+
+		/// @brief The SegmentProvider to be used if no segemnt is explicitly provided
+		SegmentProvider* defaultSegment = nullptr;
 
 	private:
 		/// @brief Mapping from parallelism string to type

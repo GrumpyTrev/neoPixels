@@ -152,5 +152,6 @@ namespace Lights
 		item->PostDelay((NumberProvider *)(storage.DelayProvider));
 		item->Segment((SegmentProvider *)(storage.SegmentProvider));
 		item->ItemSynch(GetStoredSynchType(ExecutableItem::sequential, storage.ItemTypeProvider));
+		item->DefaultSegment( dynamic_cast<SegmentProvider*>( objectStorage.GetObject( "fullSegment" ) ) );
 	}
 }
