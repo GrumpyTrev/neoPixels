@@ -23,7 +23,7 @@ namespace Lights
 
 		/// @brief Set the amount to increase or decrease the brightness
 		/// @param percentage 
-		inline void Percentage( uint percentage ) { fadePercentage = percentage; }
+		inline void Percentage( uint16_t percentage ) { fadePercentage = percentage; }
 
 	protected:
 		
@@ -33,7 +33,7 @@ namespace Lights
 		{ 
 			Lights::Segment* segment = itemSegment->Value();
 
-			for ( uint index = 0; index < segment->NumLeds(); index++ )
+			for ( uint16_t index = 0; index < segment->NumLeds(); index++ )
 			{
 				HSVColour hsv = segment->PixelColour( index ).ToHSV();
 				hsv.value = ( hsv.value * fadePercentage ) / 100;
@@ -44,6 +44,6 @@ namespace Lights
 	private:
 		
 		/// @brief How much to reduce or increase the brightness of all the LEDS
-		uint fadePercentage = 0; 
+		uint16_t fadePercentage = 0;
 	};
 }

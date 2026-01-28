@@ -5,8 +5,7 @@ using namespace std;
 
 namespace Lights
 {
-	const Colour Colour::InvalidColour = Colour(0xffffffff);
-	const Colour Colour::White = Colour(0xff, 0xff, 0xff);
+	const Colour Colour::InvalidColour = Colour( 0xffffffff );
 	const Colour Colour::Black = Colour(0, 0, 0);
 
 	map<string, Colour> colourMap{

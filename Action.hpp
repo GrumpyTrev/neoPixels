@@ -18,7 +18,7 @@ namespace Lights
 
 		/// @brief Execute the Action
 		/// @param count
-		bool Execute(uint count);
+		bool Execute( uint16_t count );
 
 		/// @brief Allow the ColourProvider to be specified
 		/// @param provider
@@ -35,6 +35,6 @@ namespace Lights
 		ColourProvider *actionColourProvider;
 
 		/// @brief A counter that can be used by the Action to control its actions
-		uint stepCount = 0;
+		uint16_t stepCount = 0;
 	};
 }

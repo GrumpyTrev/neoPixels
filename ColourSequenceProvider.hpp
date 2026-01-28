@@ -1,5 +1,4 @@
 #pragma once
-#include "SimpleSequenceProvider.hpp"
 #include "ColourProvider.hpp"
 
 namespace Lights
@@ -7,6 +6,11 @@ namespace Lights
 	class ColourSequenceProvider : public ColourProvider
 	{
 	public:
-		inline ColourSequenceProvider() { providerImplementation = new SimpleSequenceProvider<Colour>(Colour::InvalidColour); };
+		inline ColourSequenceProvider() : ColourProvider( Colour::InvalidColour ) {}
+		inline void Next() { providedValue = sequence.Next(); }
+		inline void AddValue( Colour valueToAdd ) { sequence.Add( valueToAdd ); }
+
+	private:
+		ProviderSequenceHelper<Colour> sequence;
 	};
 }

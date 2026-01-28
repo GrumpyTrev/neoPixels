@@ -1,5 +1,4 @@
 #pragma once
-#include "SimpleSequenceProvider.hpp"
 #include "SegmentProvider.hpp"
 
 namespace Lights
@@ -7,6 +6,11 @@ namespace Lights
 	class SegmentSequenceProvider : public SegmentProvider
 	{
 	public:
-		inline SegmentSequenceProvider() { providerImplementation = new SimpleSequenceProvider<Segment *>(nullptr); }
+		inline SegmentSequenceProvider() : SegmentProvider( nullptr ) {}
+		inline void Next() { providedValue = sequence.Next(); }
+		inline void AddValue( Segment* valueToAdd ) { sequence.Add( valueToAdd ); }
+
+	private:
+		ProviderSequenceHelper<Segment*> sequence;
 	};
 }

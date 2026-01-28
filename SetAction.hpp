@@ -36,7 +36,7 @@ namespace Lights
 			{
 				// Don't use Fill here as we want to call the colour provider for each pixel
 				Lights::Segment* segment = itemSegment->Value();
-				for ( int index = 0; index < segment->NumLeds(); index++ )
+				for ( uint16_t index = 0; index < segment->NumLeds(); index++ )
 				{
 					segment->SetPixelColour( index, actionColourProvider->Value() );
 				}

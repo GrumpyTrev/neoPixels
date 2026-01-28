@@ -2,7 +2,7 @@
 
 namespace Lights
 {
-	LedStrip::LedStrip(uint numLeds) : numLeds(numLeds)
+	LedStrip::LedStrip( uint16_t numLeds ) : numLeds( numLeds )
 	{
 		pixelData = new Colour[numLeds];
 	}
@@ -12,7 +12,7 @@ namespace Lights
 		delete pixelData;
 	}
 
-	Colour LedStrip::PixelColour(uint index)
+	Colour LedStrip::PixelColour( uint16_t index )
 	{
 		Colour pixelColor;
 		if (index < numLeds)
@@ -23,7 +23,7 @@ namespace Lights
 		return pixelColor;
 	}
 
-	void LedStrip::SetPixelColour(uint index, Colour colour)
+	void LedStrip::SetPixelColour( uint16_t index, Colour colour )
 	{
 		if (index < numLeds)
 		{

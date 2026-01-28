@@ -10,14 +10,14 @@ namespace Lights
 	class LedStrip
 	{
 	public:
-		LedStrip(uint numLeds);
+		LedStrip( uint16_t numLeds );
 		~LedStrip();
 
-		inline uint NumLeds() { return numLeds; };
+		inline uint16_t NumLeds() { return numLeds; };
 		inline uint8_t Brightness() { return brightness; };
 		inline void SetBrightness(uint8_t brightnessValue) { brightness = brightnessValue; };
-		Colour PixelColour(uint index);
-		void SetPixelColour(uint index, Colour colour);
+		Colour PixelColour( uint16_t index );
+		void SetPixelColour( uint16_t index, Colour colour );
 		virtual void Show() = 0;
 		inline void ApplyGamma(bool gammaValue) { applyGamma = gammaValue; };
 		inline bool Gamma() { return applyGamma; };
@@ -25,7 +25,7 @@ namespace Lights
 	protected:
 		uint32_t ScalePixelData(uint32_t data, uint16_t scale);
 
-		uint numLeds;
+		uint16_t numLeds;
 		uint8_t brightness = 255;
 		bool applyGamma;
 

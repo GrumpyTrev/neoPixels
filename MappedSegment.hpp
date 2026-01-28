@@ -15,7 +15,7 @@ namespace Lights
 		/// @brief Set a pixel colour through the mapping
 		/// @param index
 		/// @param colour
-		inline void SetPixelColour(uint index, Colour colour)
+		inline void SetPixelColour( uint16_t index, Colour colour )
 		{
 			if (index < numLeds)
 			{
@@ -26,7 +26,7 @@ namespace Lights
 		/// @brief Get a pixel colour through the mapping
 		/// @param index
 		/// @return
-		inline Colour PixelColour(uint index)
+		inline Colour PixelColour( uint16_t index )
 		{
 			Colour pixelColour = Colour::InvalidColour;
 			if (index < numLeds)
@@ -39,6 +39,6 @@ namespace Lights
 
 	protected:
 		// Mapping between the segment pixel number and the underlying strip
-		uint *pixelMap;
+		uint16_t* pixelMap;
 	};
 }

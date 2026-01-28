@@ -4,15 +4,15 @@
 namespace Lights
 {
 	/// @brief Class used to wrap up a ExecutableItem.SynchType in a provider
-	class ExecutableTypeProvider : public BaseProvider<ExecutableItem::SynchType>
+	class ExecutableTypeProvider : public ProviderBase
 	{
 	public:
-		inline ExecutableTypeProvider(ExecutableItem::SynchType synchType)
-		{
-			providerImplementation = new SimpleProvider<ExecutableItem::SynchType>(synchType);
-		}
+		inline ExecutableTypeProvider( ExecutableItem::SynchType synchType ) : providedValue( synchType ) {};
+		inline virtual ExecutableItem::SynchType Value() { return providedValue; }
+		inline virtual ExecutableItem::SynchType GetValue() { return providedValue; }
+		inline virtual void SetValue( ExecutableItem::SynchType value ) { providedValue = value; }
 
 	protected:
-		inline ExecutableTypeProvider() {};
+		ExecutableItem::SynchType providedValue = ExecutableItem::sequential;
 	};
 }

@@ -18,8 +18,8 @@ namespace Lights
 		else
 		{
 			// Get the start led, count and reverse flag
-			uint startIndex = GetStoredNumber(0, storage.StartLedProvider);
-			uint numLeds = GetStoredNumber(commandStrip->NumLeds(), storage.CountProvider);
+			uint16_t startIndex = GetStoredNumber( 0, storage.StartLedProvider );
+			uint16_t numLeds = GetStoredNumber( commandStrip->NumLeds(), storage.CountProvider );
 			bool reverse = GetStoredBoolean(false, storage.ReverseProvider);
 
 			Segment *sequence = nullptr;
@@ -44,9 +44,9 @@ namespace Lights
 		if ((storage.StartLedProvider != nullptr) && (storage.IntervalProvider != nullptr))
 		{
 			// Get the start, interval, number of Leds and the reverse flag
-			uint startIndex = GetStoredNumber(0, storage.StartLedProvider);
-			uint interval = GetStoredNumber(0, storage.IntervalProvider);
-			uint maxLed = GetStoredNumber(commandStrip->NumLeds() - 1, storage.CountProvider);
+			uint16_t startIndex = GetStoredNumber( 0, storage.StartLedProvider );
+			uint16_t interval = GetStoredNumber( 0, storage.IntervalProvider );
+			uint16_t maxLed = GetStoredNumber( commandStrip->NumLeds() - 1, storage.CountProvider );
 			bool reverse = GetStoredBoolean(false, storage.ReverseProvider);
 
 			StoreObject(new SegmentProvider(

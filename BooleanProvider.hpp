@@ -1,18 +1,18 @@
 #pragma once
-#include "SimpleProvider.hpp"
+#include "ProviderBase.hpp"
 
 namespace Lights
 {
 	/// @brief Class used to wrap up a boolean in a provider
-	class BooleanProvider : public BaseProvider<bool>
+	class BooleanProvider : public ProviderBase
 	{
 	public:
-		inline BooleanProvider(bool value)
-		{
-			providerImplementation = new SimpleProvider<bool>(value);
-		}
+		inline BooleanProvider( bool initial ) : providedValue( initial ) {};
+		inline virtual bool Value() { return providedValue; }
+		inline virtual bool GetValue() { return providedValue; }
+		inline virtual void SetValue( bool value ) { providedValue = value; }
 
 	protected:
-		inline BooleanProvider() {};
+		bool providedValue = false;
 	};
 }

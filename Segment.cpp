@@ -2,14 +2,14 @@
 
 namespace Lights
 {
-	void Segment::Fill(Colour colour, uint first, uint count)
+	void Segment::Fill( Colour colour, uint16_t first, uint16_t count )
 	{
-		uint last = (first + count);
+		uint16_t last = ( first + count );
 		if (last > numLeds)
 		{
 			last = numLeds;
 		}
-		for (uint i = first; i < last; i++)
+		for ( uint16_t i = first; i < last; i++ )
 		{
 			SetPixelColour(i, colour);
 		}
@@ -17,7 +17,7 @@ namespace Lights
 
 	void Segment::Shift()
 	{
-		for (uint index = numLeds - 1; index > 0; index--)
+		for ( uint16_t index = numLeds - 1; index > 0; index-- )
 		{
 			SetPixelColour(index, PixelColour(index - 1));
 		}

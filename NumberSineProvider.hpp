@@ -6,10 +6,10 @@ namespace Lights
 	class NumberSineProvider : public NumberProvider
 	{
 	public:
-		inline NumberSineProvider(uint step) : interval(step), NumberProvider(SineTable[0]) {};
+        inline NumberSineProvider( uint16_t step ) : interval( step ), NumberProvider( SineTable[ 0 ] ) {};
 
 		/// @brief Supply the next number
-		inline virtual void Next()
+        inline void Next()
 		{
             index += interval;
             SetValue( SineTable[index]);
@@ -17,7 +17,7 @@ namespace Lights
 
 	protected:
         /// @brief The interval between supplied sine values
-        uint interval;
+        uint16_t interval;
 
         /// @brief The index into the sine table of the last value
         uint8_t index = 0;

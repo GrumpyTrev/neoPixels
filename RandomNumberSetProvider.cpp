@@ -11,14 +11,14 @@ namespace Lights
 		if (numberset.size() == 0)
 		{
 			// Fill the set with the sequence of numbers from 'minimum' to 'maximum'
-			for (uint index = minimum; index <= maximum; ++index)
+			for ( uint16_t index = minimum; index <= maximum; ++index )
 			{
 				numberset.push_back(index);
 			}
 		}
 
 		// Select one of the set at random
-		uint numberIndex = AnimationHelper::Random8(0, numberset.size() - 1);
+		uint8_t numberIndex = AnimationHelper::Random8( 0, numberset.size() - 1 );
 		SetValue(numberset.at(numberIndex));
 
 		// Remove from the set of numbers

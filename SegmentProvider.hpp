@@ -1,19 +1,19 @@
 #pragma once
-#include "SimpleProvider.hpp"
+#include "ProviderBase.hpp"
 #include "Segment.hpp"
 
 namespace Lights
 {
 	/// @brief Class used to wrap up a Segment in a provider
-	class SegmentProvider : public BaseProvider<Segment *>
+	class SegmentProvider : public ProviderBase
 	{
 	public:
-		inline SegmentProvider(Segment *segment)
-		{
-			providerImplementation = new SimpleProvider<Segment *>(segment);
-		};
+		inline SegmentProvider( Segment* initial ) : providedValue( initial ) {};
+		inline virtual Segment* Value() { return providedValue; }
+		inline virtual Segment* GetValue() { return providedValue; }
+		inline virtual void SetValue( Segment* value ) { providedValue = value; }
 
 	protected:
-		inline SegmentProvider() {};
+		Segment* providedValue = nullptr;
 	};
 }

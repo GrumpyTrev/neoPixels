@@ -4,9 +4,9 @@
 #include "Action.hpp"
 #include "SetAction.hpp"
 #include "ShiftAction.hpp"
-#include "CycleAction.hpp"
 #include "Block.hpp"
 #include "FadeAction.hpp"
+#include "TriggerAction.hpp"
 
 using namespace std;
 
@@ -47,32 +47,6 @@ namespace Lights
 		StoreObject(definedAction, "ShiftAction");
 	};
 
-	/// @brief Parse a CycleAction definition
-	/// @param tokens
-	/// @return
-	void ObjectParsers::MakeCycleAction()
-	{
-		CycleAction *definedAction = new CycleAction();
-
-		// There should be at least one provider
-		if ((storage.Objects.size() > 0) &&
-			(storage.CheckObjectsType<ProviderCycleInterface>() == true))
-		{
-			ApplyCommonItemParameters(definedAction);
-
-			for (BaseDefinedObject *object : storage.Objects)
-			{
-				definedAction->AddProvider((ProviderCycleInterface *)(object));
-			}
-
-			StoreObject(definedAction, "CycleAction");
-		}
-		else
-		{
-			errorStream << "Either no providers or invalid providers for CycleAction " << storage.Name;
-		}
-	}
-
 	/// @brief Parse a FadeAction definition
 	/// @param tokens
 	/// @return
@@ -92,6 +66,16 @@ namespace Lights
 			definedAction->Percentage( ( (NumberProvider *)storage.IntervalProvider )->GetValue());
 			StoreObject(definedAction, "FadeAction");
 		}
+	};
+
+	/// @brief Parse a TriggerAction definition
+	/// @param tokens
+	/// @return
+	void ObjectParsers::MakeTriggerAction()
+	{
+		TriggerAction* definedAction = new TriggerAction();
+		ApplyCommonItemParameters( definedAction );
+		StoreObject( definedAction, "TriggerAction" );
 	};
 
 	/// @brief Parse a Block definition

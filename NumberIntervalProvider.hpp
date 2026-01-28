@@ -1,35 +1,43 @@
 #pragma once
 #include "NumberProvider.hpp"
 
-// TESTING
-#include <iostream>
-
 namespace Lights
 {
-	class NumberIntervalProvider : public NumberProvider
-	{
-	public:
-		inline NumberIntervalProvider(uint min, uint max, uint step, bool reverse) : 
-            minimum(min), maximum(max), interval(step), reverseAtEnd( reverse ), NumberProvider(min) {};
+    /// @brief The NumberIntervalProvider provides basic 'counter' functionality with min, max and step values.
+    ///        It can be self triggering, i.e. it can provide the next value automatically rather than being triggered
+    class NumberIntervalProvider : public NumberProvider
+    {
+    public:
+        inline NumberIntervalProvider( NumberProvider* min, NumberProvider* max, uint16_t step, bool reverse ) :
+            minimumProvider( min ), maximumProvider( max ), interval( step ), reverseAtEnd( reverse ),
+            NumberProvider( 0 ) {
+        };
 
-		/// @brief Supply the next number
-		inline virtual void Next()
-		{
-            if (firstRun == true )
+        /// @brief Supply the next number
+        inline virtual void Next()
+        {
+            // If this is the first time this has been run, or after a reset, start from the minimum again and cache
+            // the NumberProvider min and max value
+            if ( firstRun == true )
             {
+                minimum = minimumProvider->Value();
+                maximum = maximumProvider->Value();
+                reversing = false;
                 SetValue( minimum );
+
                 firstRun = false;
             }
             else
             {
-                uint nextValue = 0;
+                // Use 32 bit here in case maximum is 65535
+                uint32_t nextValue = 0;
 
                 if ( reversing == false )
                 {
                     nextValue = GetValue() + interval;
-                    if ( nextValue > maximum ) 
+                    if ( nextValue > maximum )
                     {
-                        // If reverseAtEnd is false then start agsain at the minimum.
+                        // If reverseAtEnd is false then start again at the minimum.
                         // Otherwise start at the maximum and reverse direction
                         if ( reverseAtEnd == false )
                         {
@@ -44,7 +52,8 @@ namespace Lights
                 }
                 else
                 {
-                    if ( GetValue() < ( minimum + interval ) ) 
+                    // Will the next step go negative
+                    if ( GetValue() < ( minimum + interval ) )
                     {
                         // Start reached. Reverse direction
                         reversing = false;
@@ -55,21 +64,27 @@ namespace Lights
                         nextValue = GetValue() - interval;
                     }
                 }
- 
-                SetValue( nextValue );
+
+                SetValue( (uint16_t)nextValue );
             }
-			// cout << "NumberIntervalProvider " << Value() << "\n";
-		}
+        }
 
-	protected:
-		/// @brief Minimum number
-		uint minimum;
+        /// @brief Reset the provider
+        inline virtual void Reset() { firstRun = true; }
 
-		/// @brief Maximum number
-		uint maximum;
+    protected:
+        /// @brief Minimum number provider
+        NumberProvider* minimumProvider;
+
+        /// @brief Maximum number provider
+        NumberProvider* maximumProvider;
+
+        /// @brief The limits provided by the providers
+        uint16_t minimum;
+        uint16_t maximum;
 
         /// @brief The interval between supplied numbers
-        uint interval;
+        uint16_t interval;
 
         /// @brief Flag used to detect when this provider is first run
         bool firstRun = true;
@@ -79,5 +94,5 @@ namespace Lights
 
         /// @brief Is the sequence currently reversing
         bool reversing = false;
-	};
+    };
 }

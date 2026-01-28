@@ -5,6 +5,7 @@
 #include "Trace.hpp"
 #include "Block.hpp"
 #include "Commander.hpp"
+#include "TriggerAction.hpp"
 
 using namespace std;
 
@@ -30,12 +31,12 @@ namespace Lights
 		parserMap.emplace("colourHSV", &ObjectParsers::MakeColourHSVProvider);
 		parserMap.emplace("randomNumber", &ObjectParsers::MakeRandomNumberProvider);
 		parserMap.emplace("randomNumberSet", &ObjectParsers::MakeRandomNumberSetProvider);
-		parserMap.emplace("numberInterval", &ObjectParsers::MakeNumberIntervalProvider);
+		parserMap.emplace( "counter", &ObjectParsers::MakeNumberIntervalProvider );
 		parserMap.emplace( "sineSequence", &ObjectParsers::MakeNumberSineProvider );
-		parserMap.emplace("set", &ObjectParsers::MakeSetAction);
-		parserMap.emplace("cycle", &ObjectParsers::MakeCycleAction);
+		parserMap.emplace( "set", &ObjectParsers::MakeSetAction );
 		parserMap.emplace("shift", &ObjectParsers::MakeShiftAction);
-		parserMap.emplace("fade", &ObjectParsers::MakeFadeAction);
+		parserMap.emplace( "fade", &ObjectParsers::MakeFadeAction );
+		parserMap.emplace( "trigger", &ObjectParsers::MakeTriggerAction );
 		parserMap.emplace("block", &ObjectParsers::MakeBlock);
 
 		// Initialise the command name to processing method map
@@ -55,14 +56,17 @@ namespace Lights
 		parameterParseMap.emplace("start", MakeParseData(ColourParameter, storage.FadeStartColourProvider));
 		parameterParseMap.emplace("end", MakeParseData(ColourParameter, storage.FadeEndColourProvider));
 		parameterParseMap.emplace("step", MakeParseData(NumberParameter, storage.IntervalProvider));
-		parameterParseMap.emplace("minimum", MakeParseData(NumberParameter, storage.MinRangeProvider));
-		parameterParseMap.emplace("maximum", MakeParseData(NumberParameter, storage.MaxRangeProvider));
+		parameterParseMap.emplace( "min", MakeParseData( NumberParameter, storage.MinRangeProvider ) );
+		parameterParseMap.emplace( "max", MakeParseData( NumberParameter, storage.MaxRangeProvider ) );
 		parameterParseMap.emplace("type", MakeParseData(ItemTypeParameter, storage.ItemTypeProvider));
 		parameterParseMap.emplace("colour", MakeParseData(ColourParameter, storage.ItemColourProvider));
 		parameterParseMap.emplace("hue", MakeParseData(NumberParameter, storage.HueProvider));
 		parameterParseMap.emplace("sat", MakeParseData(NumberParameter, storage.SatProvider));
 		parameterParseMap.emplace("value", MakeParseData(NumberParameter, storage.ValueProvider));
 		parameterParseMap.emplace("fadeBy", MakeParseData(NumberParameter, storage.IntervalProvider));
+		parameterParseMap.emplace( "next", MakeParseData( TriggerParameter, storage.NextTrigger ) );
+		parameterParseMap.emplace( "reset", MakeParseData( TriggerParameter, storage.ResetTrigger ) );
+		parameterParseMap.emplace( "self", MakeParseData( BooleanParameter, storage.SelfIncrement ) );
 	}
 
 	/// @brief Find a parser for the specified type and run it
@@ -118,9 +122,9 @@ namespace Lights
 		}
 		else if (storage.Numbers.size() == 3)
 		{
-			uint redValue = storage.Numbers[0];
-			uint greenValue = storage.Numbers[1];
-			uint blueValue = storage.Numbers[2];
+			uint16_t redValue = storage.Numbers[ 0 ];
+			uint16_t greenValue = storage.Numbers[ 1 ];
+			uint16_t blueValue = storage.Numbers[ 2 ];
 
 			Colour::AddColour(storage.Name, Colour(redValue, greenValue, blueValue));
 			cout << "Added colour " << storage.Name << " red " << redValue << " green " << greenValue << " blue " << blueValue << "\n";
@@ -138,7 +142,7 @@ namespace Lights
 		// The brightness command expects a numeric value
 		if (tokens->TokensLeft() == 1)
 		{
-			uint brightnessValue;
+			uint16_t brightnessValue;
 			if (tokens->NextUint(brightnessValue) == true)
 			{
 				commandStrip->SetBrightness(brightnessValue);
@@ -252,7 +256,7 @@ namespace Lights
 					try
 					{
 						// Try and convert to a number
-						uint number = (uint)stoi(token, nullptr, 0);
+						uint16_t number = (uint16_t)stoi( token, nullptr, 0 );
 						storage.AddNumber(number);
 					}
 					catch (invalid_argument const &ex)
@@ -299,7 +303,7 @@ namespace Lights
 			// Look for a number or a referenced NumberProvider
 			try
 			{
-				uint number = (uint)stoi(value, nullptr, 0);
+				uint16_t number = (uint16_t)stoi( value, nullptr, 0 );
 				parseData.StorageLocation = new NumberProvider(number);
 			}
 			catch (invalid_argument const &ex)
@@ -374,6 +378,19 @@ namespace Lights
 			else
 			{
 				parseData.StorageLocation = new ExecutableTypeProvider(itemType);
+			}
+		}
+		else if ( parseData.Type == TriggerParameter )
+		{
+			// Look for a TriggerAction
+			TriggerAction* parsedObject = dynamic_cast<TriggerAction*>( objectStorage.GetObject( value ) );
+			if ( parsedObject == nullptr )
+			{
+				errorStream << value << " is not a TriggerAction";
+			}
+			else
+			{
+				parseData.StorageLocation = parsedObject;
 			}
 		}
 	}

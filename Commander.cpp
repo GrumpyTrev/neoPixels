@@ -33,7 +33,7 @@ namespace Lights
 	/// @brief Execute the specified Block
 	void Commander::ExecuteBlock()
 	{
-		uint executionCount = 0;
+		uint16_t executionCount = 0;
 
 		// Make sure that the Block runs straight away
 		absolute_time_t delayTime = get_absolute_time();
@@ -80,7 +80,7 @@ namespace Lights
 	/// @brief Get character either from the Scripting class or the Uart
 	void Commander::GetCommand()
 	{
-		if (Scripting::IsActive() == true)
+		if ( Scripting::IsActive() == true )
 		{
 			GetScriptCommand();
 		}

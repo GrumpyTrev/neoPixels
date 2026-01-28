@@ -67,7 +67,6 @@ namespace Lights
 
 		static const Colour InvalidColour;
 
-		static const Colour White;
 		static const Colour Black;
 	};
 }

@@ -28,13 +28,11 @@ add_executable(${PROJECT}
 		ObjectParsers.cpp
 		ObjectStore.cpp
 		ColourSequenceProvider.hpp
-		SimpleProvider.hpp
+		ProviderBase.hpp
 		NumberProvider.hpp
 		ColourFadeProvider.cpp
 		MappedSegment.hpp
-		RandomLedSequence.hpp
 		NumberSequenceProvider.hpp
-		SimpleSequenceProvider.hpp
 		DiscreteSegment.cpp
 		ProviderParsers.cpp
 		RandomNumberProvider.hpp
@@ -44,7 +42,6 @@ add_executable(${PROJECT}
 		ShiftAction.hpp
 		SetAction.hpp
 		ExecutableItemParsers.cpp
-		CycleAction.hpp
 		Block.cpp
 		SegmentProvider.hpp
 		BooleanProvider.hpp
@@ -57,6 +54,7 @@ add_executable(${PROJECT}
 		ColourHSVProvider.hpp
 		NumberSineProvider.hpp
 		FadeAction.hpp
+		TriggerAction.hpp
 		)
 
 target_link_libraries(${PROJECT}

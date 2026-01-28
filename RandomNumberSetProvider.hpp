@@ -9,11 +9,11 @@ namespace Lights
 	class RandomNumberSetProvider : public RandomNumberProvider
 	{
 	public:
-		inline RandomNumberSetProvider(uint min, uint max) : RandomNumberProvider(min, max) {};
+		inline RandomNumberSetProvider( uint16_t min, uint16_t max ) : RandomNumberProvider( min, max ) {};
 
 		void Next();
 
 	private:
-		vector<uint> numberset;
+		vector<uint16_t> numberset;
 	};
 }

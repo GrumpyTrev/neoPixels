@@ -2,28 +2,24 @@
 #include "NumberProvider.hpp"
 #include "AnimationHelper.hpp"
 
-// TESTING
-#include <iostream>
-
 namespace Lights
 {
 	class RandomNumberProvider : public NumberProvider
 	{
 	public:
-		inline RandomNumberProvider(uint min, uint max) : minimum(min), maximum(max), NumberProvider(0) {};
+		inline RandomNumberProvider( uint16_t min, uint16_t max ) : minimum( min ), maximum( max ), NumberProvider( 0 ) {};
 
 		/// @brief Supply the next colour
 		inline virtual void Next()
 		{
-			SetValue(AnimationHelper::Random16(minimum, maximum));
-			// cout << "Setting random number to " << Value() << "\n";
+			SetValue( AnimationHelper::Random16( minimum, maximum ) );
 		}
 
 	protected:
 		/// @brief Minimum number
-		uint minimum;
+		uint16_t minimum;
 
 		/// @brief Maximum number
-		uint maximum;
+		uint16_t maximum;
 	};
 }

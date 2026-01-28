@@ -11,23 +11,23 @@ namespace Lights
 	class Segment : public BaseDefinedObject
 	{
 	public:
-		inline Segment(LedStrip *target, uint start, uint ledCount)
+		inline Segment( LedStrip* target, uint16_t start, uint16_t ledCount )
 			: targetStrip(target), startIndex(start), numLeds(ledCount) {}
 		inline Segment(LedStrip *target) : Segment(target, 0, target->NumLeds()) {}
-		virtual inline Colour PixelColour(uint index) { return targetStrip->PixelColour(index + startIndex); };
-		virtual inline void SetPixelColour(uint index, Colour colour) { targetStrip->SetPixelColour(index + startIndex, colour); };
+		virtual inline Colour PixelColour( uint16_t index ) { return targetStrip->PixelColour( index + startIndex ); };
+		virtual inline void SetPixelColour( uint16_t index, Colour colour ) { targetStrip->SetPixelColour( index + startIndex, colour ); };
 		inline void Show() { targetStrip->Show(); };
-		void Fill(Colour colour, uint first, uint count);
+		void Fill( Colour colour, uint16_t first, uint16_t count );
 		inline void Fill(Colour colour) { Fill(colour, 0, numLeds); };
-		inline uint NumLeds() { return numLeds; };
+		inline uint16_t NumLeds() { return numLeds; };
 		inline LedStrip *Target() { return targetStrip; };
 		void Shift();
 
 	protected:
-		uint numLeds;
+		uint16_t numLeds;
 		LedStrip *targetStrip;
 
 	private:
-		uint startIndex;
+		uint16_t startIndex;
 	};
 }

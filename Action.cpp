@@ -26,22 +26,22 @@ namespace Lights
 	/// @brief Execute the operation associated with this Action
 	/// @param count
 	/// @return
-	bool Action::Execute(uint count)
+	bool Action::Execute( uint16_t count )
 	{
 		// Assume no delay, or not run
-		uint postDelayValue = 0;
+		uint16_t postDelayValue = 0;
 
 		// Save the step count so it can be accessed by derived classes
 		stepCount = count;
 
 		// Determine the possibly dynamic execution count
-		uint countLimit = (counter != nullptr) ? counter->Value() : 1;
+		uint16_t countLimit = ( counter != nullptr ) ? counter->Value() : 1;
 
 		// If there is no post-operation delay, then just perform the operation the required number
 		// of times
 		if (postDelayer == nullptr)
 		{
-			for (uint executionCount = 0; executionCount < countLimit; ++executionCount)
+			for ( uint16_t executionCount = 0; executionCount < countLimit; ++executionCount )
 			{
 				Execute();
 			}
@@ -78,6 +78,7 @@ namespace Lights
 		{
 			cout << TimeDisplay() << "Action " << Name() << " Op count " << operationCount << " post delay " << postDelayValue << "\n";
 		}
+
 		return postDelayValue > 0;
 	}
 }

@@ -47,14 +47,14 @@ namespace Lights
 	/// Set the error flag if there are no more tokens or if the token is not a valid integer
 	/// @param value Reference to uint that value should be returned in
 	/// @return Returns true if a valid integer was returned in the reference parameter
-	bool Tokeniser::NextUint(uint &value)
+	bool Tokeniser::NextUint( uint16_t& value )
 	{
 		bool uintFound = false;
 		if (TokensLeft() >= 1)
 		{
 			try
 			{
-				value = (uint)stoi(Next(), nullptr, 0);
+				value = (uint16_t)stoi( Next(), nullptr, 0 );
 				uintFound = true;
 			}
 			catch (invalid_argument const &ex)
@@ -73,23 +73,23 @@ namespace Lights
 	/// @brief Get the next unsigned integer from the command line.
 	/// Set the error flag if there are no more tokens or if the token is not a valid integer
 	/// @return Returns the integer, or 0 if no integer read
-	uint Tokeniser::NextUint()
+	uint16_t Tokeniser::NextUint()
 	{
-		uint value = 0;
+		uint16_t value = 0;
 		return (NextUint(value) == true) ? value : 0;
 	}
 
 	/// @brief Attempt to get the next unsigned integer from the command line.
 	/// @param value Reference to uint that value should be returned in
 	/// @return Returns true if a valid integer was returned in the reference parameter
-	bool Tokeniser::TryNextUint(uint &value)
+	bool Tokeniser::TryNextUint( uint16_t& value )
 	{
 		bool uintFound = false;
 		if (TokensLeft() >= 1)
 		{
 			try
 			{
-				value = (uint)stoi(Next(), nullptr, 0);
+				value = (uint16_t)stoi( Next(), nullptr, 0 );
 				uintFound = true;
 			}
 			catch (invalid_argument const &ex)
@@ -106,7 +106,7 @@ namespace Lights
 	/// @param parameterId The parameter identity prefix
 	/// @param value The returned uint
 	/// @return True if the prefix and integer were found
-	bool Tokeniser::TryUintParameter(string parameterId, uint &value)
+	bool Tokeniser::TryUintParameter( string parameterId, uint16_t& value )
 	{
 		bool uintParameterFound = false;
 
@@ -115,7 +115,7 @@ namespace Lights
 		{
 			try
 			{
-				value = (uint)stoi(valueString, nullptr, 0);
+				value = (uint16_t)stoi( valueString, nullptr, 0 );
 				uintParameterFound = true;
 			}
 			catch (invalid_argument const &ex)

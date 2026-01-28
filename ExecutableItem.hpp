@@ -24,7 +24,7 @@ namespace Lights
 		/// This must be implemented by any derived classes
 		/// @param count
 		/// @return True if a post execution delay is required
-		virtual bool Execute(uint count) = 0;
+		virtual bool Execute( uint16_t count ) = 0;
 
 		/// @brief Clone the item.
 		/// This must be implemented by any derived classes
@@ -102,7 +102,7 @@ namespace Lights
 		SynchType itemSynch = sequential;
 
 		/// @brief A counter used to repeat this Item the required number of times
-		uint operationCount = 0;
+		uint16_t operationCount = 0;
 
 		/// @brief The time this Item should run again
 		absolute_time_t delayTime;

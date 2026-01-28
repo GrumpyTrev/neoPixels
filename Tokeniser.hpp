@@ -35,24 +35,24 @@ namespace Lights
 		/// Set the error flag if there are no more tokens or if the token is not a valid integer
 		/// @param value Reference to uint that value should be returned in
 		/// @return Returns true if a valid integer was returned in the reference parameter
-		bool NextUint(uint &value);
+		bool NextUint( uint16_t& value );
 
 		/// @brief Get the next unsigned integer from the command line.
 		/// Set the error flag if there are no more tokens or if the token is not a valid integer
 		/// @return Returns the integer, or 0 if no integer read
-		uint NextUint();
+		uint16_t NextUint();
 
 		/// @brief Attempt to get the next unsigned integer from the command line.
 		/// @param value Reference to uint that value should be returned in
 		/// @return Returns true if a valid integer was returned in the reference parameter
-		bool TryNextUint(uint &value);
+		bool TryNextUint( uint16_t& value );
 
 		/// @brief Attempt to get a uint parameter from the command line
 		/// The parameter is expected to be of the form <parameterI><uint>, i.e "count=10"
 		/// @param parameterId The parameter identity prefix
 		/// @param value The returned uint
 		/// @return True if the prefix and integer were found
-		bool TryUintParameter(string parameterId, uint &value);
+		bool TryUintParameter( string parameterId, uint16_t& value );
 
 		/// @brief Attempt to get a boolean parameter from the command line
 		/// The parameter is expected to be of the form <parameterI><bool string>, i.e "count=true"
@@ -99,7 +99,7 @@ namespace Lights
 		vector<string> tokens;
 
 		/// @brief The index of the next token to be returned
-		uint tokenIndex;
+		uint16_t tokenIndex;
 
 		/// @brief Flag set to true if an error has been found during the processing of the command line
 		bool error = false;

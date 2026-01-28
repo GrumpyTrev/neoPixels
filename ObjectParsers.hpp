@@ -46,9 +46,9 @@ namespace Lights
 		void MakeNumberSineProvider();
 		void MakeSetAction();
 		void MakeShiftAction();
-		void MakeCycleAction();
 		void MakeBlock();
 		void MakeFadeAction();
+		void MakeTriggerAction();
 
 		/// @brief Command processing methods
 		void BrightnessCommand();
@@ -57,8 +57,11 @@ namespace Lights
 
 		/// @brief Apply the extracted parameters to an ExecutableItem
 		/// @param item
-		void
-		ApplyCommonItemParameters(ExecutableItem *item);
+		void ApplyCommonItemParameters( ExecutableItem* item );
+
+		/// @brief Apply the extracted parameters to a Provider
+		/// @param provider 
+		ProviderBase* ApplyCommonProviderParameters( ProviderBase* provider );
 
 		/// @brief Has an error been found during parsing
 		/// @return
@@ -71,7 +74,8 @@ namespace Lights
 			SegmentParameter = 2,
 			BooleanParameter = 4,
 			ColourParameter = 8,
-			ItemTypeParameter = 16
+			ItemTypeParameter = 16,
+			TriggerParameter = 32
 		};
 
 		/// @brief The structure used to hold a parameter type, and the location it should be stored
@@ -118,7 +122,7 @@ namespace Lights
 		/// @param defaultValue
 		/// @param provider
 		/// @return
-		uint GetStoredNumber(uint defaultValue, BaseDefinedObject *provider)
+		uint16_t GetStoredNumber( uint16_t defaultValue, BaseDefinedObject* provider )
 		{
 			return (provider == nullptr) ? defaultValue : ((NumberProvider *)(provider))->Value();
 		}
@@ -154,6 +158,9 @@ namespace Lights
 				HueProvider = nullptr;
 				SatProvider = nullptr;
 				ValueProvider = nullptr;
+				NextTrigger = nullptr;
+				ResetTrigger = nullptr;
+				SelfIncrement = nullptr;
 				Objects.clear();
 				Numbers.clear();
 				Name = "";
@@ -165,7 +172,7 @@ namespace Lights
 
 			/// @brief Add a number
 			/// @param numberToAdd
-			inline void AddNumber(uint numberToAdd) { Numbers.push_back(numberToAdd); }
+			inline void AddNumber( uint16_t numberToAdd ) { Numbers.push_back( numberToAdd ); }
 
 			/// @brief Check that all the stored objects are of a specified type
 			/// @tparam T
@@ -199,7 +206,10 @@ namespace Lights
 			BaseDefinedObject *ItemColourProvider;
 			BaseDefinedObject *HueProvider;
 			BaseDefinedObject *SatProvider;
-			BaseDefinedObject *ValueProvider;
+			BaseDefinedObject* ValueProvider;
+			BaseDefinedObject* NextTrigger;
+			BaseDefinedObject* ResetTrigger;
+			BaseDefinedObject* SelfIncrement;
 
 			/// @brief The name of the object
 			string Name;
@@ -208,7 +218,7 @@ namespace Lights
 			vector<BaseDefinedObject *> Objects;
 
 			/// @brief Any numbers defined for the object
-			vector<uint> Numbers;
+			vector<uint16_t> Numbers;
 		};
 
 		/// @brief Define a DefinitionParser as a pointer to a function that returns

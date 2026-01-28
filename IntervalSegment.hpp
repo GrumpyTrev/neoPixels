@@ -9,8 +9,8 @@ namespace Lights
 	class IntervalSegment : public MappedSegment
 	{
 	public:
-		IntervalSegment(LedStrip *target, uint start, uint interval, uint maxLedNumber, bool reverse);
-		inline IntervalSegment(LedStrip *target, uint start, uint interval)
+		IntervalSegment( LedStrip* target, uint16_t start, uint16_t interval, uint16_t maxLedNumber, bool reverse );
+		inline IntervalSegment( LedStrip* target, uint16_t start, uint16_t interval )
 			: IntervalSegment(target, start, interval, target->NumLeds() - 1, false) {};
 	};
 }

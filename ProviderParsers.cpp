@@ -12,6 +12,7 @@
 #include "NumberIntervalProvider.hpp"
 #include "ColourHSVProvider.hpp"
 #include "NumberSineProvider.hpp"
+#include "TriggerAction.hpp"
 
 using namespace std;
 
@@ -30,7 +31,7 @@ namespace Lights
 				definedProvider->AddValue(((ColourProvider *)(object))->Value());
 			}
 
-			StoreObject(definedProvider, "ColourSequenceProvider");
+			StoreObject( ApplyCommonProviderParameters( definedProvider ), "ColourSequenceProvider" );
 		}
 		else
 		{
@@ -43,7 +44,7 @@ namespace Lights
 	void ObjectParsers::MakeColourWheelProvider()
 	{
 		// Just the provider name is required. This has already been checked
-		StoreObject(new ColourWheelProvider(), "ColourWheelProvider");
+		StoreObject( ApplyCommonProviderParameters( new ColourWheelProvider() ), "ColourWheelProvider" );
 	}
 
 	/// @brief Create a ColourFadeProvider based upon two colour references and a step count
@@ -59,34 +60,34 @@ namespace Lights
 		}
 		else
 		{
-			StoreObject(new ColourFadeProvider((ColourProvider *)(storage.FadeStartColourProvider),
-											   (ColourProvider *)(storage.FadeEndColourProvider),
-											   GetStoredNumber(0, storage.IntervalProvider)),
-						"ColourFadeProvider");
+			StoreObject( ApplyCommonProviderParameters(
+				new ColourFadeProvider( (ColourProvider*)( storage.FadeStartColourProvider ),
+					(ColourProvider*)( storage.FadeEndColourProvider ),
+					GetStoredNumber( 0, storage.IntervalProvider ) ) ),
+				"ColourFadeProvider" );
 		}
 	};
 
-	/// @brief Make a NumberProvider with the specified name and values
+	/// @brief Make a NumberProvider with the specified name and value(s)
 	void ObjectParsers::MakeNumberProvider()
 	{
 		// This is going to be a NumberProvider or a NumberSequenceProvider depending on the
 		// number of numbers provided
 		if (storage.Numbers.size() > 0)
 		{
-			NumberProvider *provider = nullptr;
 			if (storage.Numbers.size() == 1)
 			{
-				provider = new NumberProvider(storage.Numbers.at(0));
-				StoreObject(provider, "NumberProvider");
+				NumberProvider* provider = new NumberProvider( storage.Numbers.at( 0 ) );
+				StoreObject( ApplyCommonProviderParameters( provider ), "NumberProvider" );
 			}
 			else
 			{
-				provider = new NumberSequenceProvider();
-				for (uint number : storage.Numbers)
+				NumberSequenceProvider* provider = new NumberSequenceProvider();
+				for ( uint16_t number : storage.Numbers )
 				{
 					provider->AddValue(number);
 				}
-				StoreObject(provider, "NumberSequenceProvider");
+				StoreObject( ApplyCommonProviderParameters( provider ), "NumberSequenceProvider" );
 			}
 		}
 		else
@@ -100,16 +101,9 @@ namespace Lights
 	/// @return
 	void ObjectParsers::MakeRandomNumberProvider()
 	{
-		if ((storage.MinRangeProvider == nullptr) || (storage.MaxRangeProvider == nullptr))
-		{
-			errorStream << "Missing range parameter for " << storage.Name;
-		}
-		else
-		{
-			StoreObject(new RandomNumberProvider(GetStoredNumber(0, storage.MinRangeProvider),
-												 GetStoredNumber(0, storage.MaxRangeProvider)),
-						"RandomNumberProvider");
-		}
+		StoreObject( ApplyCommonProviderParameters( new RandomNumberProvider( GetStoredNumber( 0, storage.MinRangeProvider ),
+			GetStoredNumber( (uint16_t)65535, storage.MaxRangeProvider ) ) ),
+			"RandomNumberProvider" );
 	}
 
 	/// @brief Create and store a RandomNumberSetProvider instance
@@ -117,16 +111,9 @@ namespace Lights
 	/// @return
 	void ObjectParsers::MakeRandomNumberSetProvider()
 	{
-		if ((storage.MinRangeProvider == nullptr) || (storage.MaxRangeProvider == nullptr))
-		{
-			errorStream << "Missing range parameter for " << storage.Name;
-		}
-		else
-		{
-			StoreObject(new RandomNumberSetProvider(GetStoredNumber(0, storage.MinRangeProvider),
-													GetStoredNumber(0, storage.MaxRangeProvider)),
-						"RandomNumberSetProvider");
-		}
+		StoreObject( ApplyCommonProviderParameters( new RandomNumberSetProvider( GetStoredNumber( 0, storage.MinRangeProvider ),
+			GetStoredNumber( (uint16_t)65535, storage.MaxRangeProvider ) ) ),
+			"RandomNumberSetProvider" );
 	}
 	
 	/// @brief Create and store a NumberIntervalProvider instance
@@ -134,22 +121,20 @@ namespace Lights
 	/// @return
 	void ObjectParsers::MakeNumberIntervalProvider()
 	{
-		if ((storage.MinRangeProvider == nullptr) || (storage.MaxRangeProvider == nullptr))
-		{
-			errorStream << "Missing range parameter for " << storage.Name;
-		}
-		else
-		{
-			// The step is optional
-			uint step = GetStoredNumber(1, storage.IntervalProvider);
+		// If the minimum or maximum are not specified then make number providers for them
+		NumberProvider* minProvider = ( storage.MinRangeProvider != nullptr ) ?
+			(NumberProvider*)storage.MinRangeProvider : new NumberProvider( 0 );
+		NumberProvider* maxProvider = ( storage.MaxRangeProvider != nullptr ) ?
+			(NumberProvider*)storage.MaxRangeProvider : new NumberProvider( uint16_t( 65535 ) );
 
-			// The reverse is optional
-			bool reverse = GetStoredBoolean( false, storage.ReverseProvider);
+		// The step is optional
+		uint16_t step = GetStoredNumber( 1, storage.IntervalProvider );
 
-			StoreObject(new NumberIntervalProvider(GetStoredNumber(0, storage.MinRangeProvider),
-												   GetStoredNumber(0, storage.MaxRangeProvider), step, reverse ),
-						"NumberIntervalProvider");
-		}
+		// The reverse is optional
+		bool reverse = GetStoredBoolean( false, storage.ReverseProvider );
+
+		StoreObject( ApplyCommonProviderParameters(
+			new NumberIntervalProvider( minProvider, maxProvider, step, reverse ) ), "NumberIntervalProvider" );
 	}
 
 	/// @brief Create and store a ColourHSVProvider instance
@@ -163,9 +148,10 @@ namespace Lights
 		}
 		else
 		{
-			StoreObject(new ColourHSVProvider( ( NumberProvider*) storage.HueProvider, 
-						( NumberProvider*) storage.SatProvider, ( NumberProvider*) storage.ValueProvider),
-						"ColourHSVProvider");
+			StoreObject( ApplyCommonProviderParameters(
+				new ColourHSVProvider( (NumberProvider*)storage.HueProvider, (NumberProvider*)storage.SatProvider,
+					(NumberProvider*)storage.ValueProvider, GetStoredNumber( 0, storage.IntervalProvider ) ) ),
+				"ColourHSVProvider" );
 		}
 	}
 
@@ -175,9 +161,9 @@ namespace Lights
 	void ObjectParsers::MakeNumberSineProvider()
 	{
 		// The step is optional
-		uint step = GetStoredNumber(1, storage.IntervalProvider);
+		uint16_t step = GetStoredNumber( 1, storage.IntervalProvider );
 
-		StoreObject(new NumberSineProvider( step ), "NumberSineProvider");
+		StoreObject( ApplyCommonProviderParameters( new NumberSineProvider( step ) ), "NumberSineProvider" );
 	}
 
 	/// @brief Make a SegmentSequenceProvider from the ParameterStorage
@@ -196,11 +182,33 @@ namespace Lights
 				definedObject->AddValue(((SegmentProvider *)(object))->Value());
 			}
 
-			StoreObject(definedObject, "SegmentSequenceProvider");
+			StoreObject( ApplyCommonProviderParameters( definedObject ), "SegmentSequenceProvider" );
 		}
 		else
 		{
 			errorStream << "Either no providers or invalid providers for CycleAction " << storage.Name;
 		}
+	}
+
+	/// @brief Apply the extracted parameters to a Provider
+	/// @param error
+	/// @return
+	ProviderBase* ObjectParsers::ApplyCommonProviderParameters( ProviderBase* provider )
+	{
+		if ( storage.NextTrigger != nullptr )
+		{
+			( (TriggerAction*)storage.NextTrigger )->AddCallback(
+				new Callback<ProviderBase>( provider, &ProviderBase::Next ) );
+		}
+
+		if ( storage.ResetTrigger != nullptr )
+		{
+			( (TriggerAction*)storage.ResetTrigger )->AddCallback(
+				new Callback<ProviderBase>( provider, &ProviderBase::Reset ) );
+		}
+
+		provider->SetSelfIncrement( GetStoredBoolean( false, storage.SelfIncrement ) );
+
+		return provider;
 	}
 }

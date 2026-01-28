@@ -35,7 +35,7 @@ namespace Lights
 
 		/// @brief Execute the Block
 		/// @param count
-		bool Execute(uint count);
+		bool Execute( uint16_t count );
 
 		/// @brief Add an ExecutableItem to either the sequential or parallel lists
 		/// @param itemToAdd
@@ -56,7 +56,7 @@ namespace Lights
 		void EndOfSequence();
 
 		/// @brief Find the runnable item with the shortest delay.
-		ExecutableItem *ItemWithShortestDelay(uint &index);
+		ExecutableItem* ItemWithShortestDelay( uint16_t& index );
 
 		/// @brief Find the runnable item with the shortest delay.
 		ExecutableItem *ItemWithShortestDelay();
@@ -93,7 +93,7 @@ namespace Lights
 		bool firstExecution = true;
 
 		/// @brief The index of the sequential items currently being executed
-		uint sequentialItemIndex = 0;
+		uint16_t sequentialItemIndex = 0;
 
 		/// @brief Flag used to indicate when this block is using its post operational delay
 		bool postOperationDelaying = false;

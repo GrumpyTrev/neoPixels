@@ -10,9 +10,9 @@ namespace Lights
 {
 	/// @brief Execute the Block
 	/// @param count
-	bool Block::Execute(uint count)
+	bool Block::Execute( uint16_t count )
 	{
-		if (Trace::TraceOn() == true)
+		if ( Trace::TraceOn() == true )
 		{
 			cout << TimeDisplay() << "Block " << Name() << " executing. Op count " << operationCount << "\n";
 		}
@@ -240,20 +240,20 @@ namespace Lights
 	/// @brief Find the runnable item with the shortest delay.
 	ExecutableItem *Block::ItemWithShortestDelay()
 	{
-		uint itemIndex = 0;
+		uint16_t itemIndex = 0;
 		return (ItemWithShortestDelay(itemIndex));
 	}
 
 	/// @brief Find the Item in the runnable list with the shortest delay.
 	/// @return
-	ExecutableItem *Block::ItemWithShortestDelay(uint &selectedIndex)
+	ExecutableItem* Block::ItemWithShortestDelay( uint16_t& selectedIndex )
 	{
 		ExecutableItem *selectedItem = nullptr;
 
 		selectedIndex = 0;
 		absolute_time_t minDelay = at_the_end_of_time;
 
-		for (uint runningIndex = 0; runningIndex < runningItems.size(); ++runningIndex)
+		for ( uint16_t runningIndex = 0; runningIndex < runningItems.size(); ++runningIndex )
 		{
 			ExecutableItem *runningItem = runningItems.at(runningIndex);
 			if (to_us_since_boot(runningItem->DelayTime()) < to_us_since_boot(minDelay))
@@ -271,7 +271,7 @@ namespace Lights
 	/// delay whose delay time has already elapsed
 	ExecutableItem *Block::NextRunnableItem()
 	{
-		uint itemIndex = 0;
+		uint16_t itemIndex = 0;
 		ExecutableItem *itemToRun = ItemWithShortestDelay(itemIndex);
 
 		if ((itemToRun != nullptr) && (time_reached(itemToRun->DelayTime()) == true))
@@ -290,7 +290,7 @@ namespace Lights
 	/// synchronised with the end of the sequence
 	void Block::TerminateEndSynchronisedItems()
 	{
-		for (int index = runningItems.size() - 1; index >= 0; index--)
+		for ( int index = runningItems.size() - 1; index >= 0; index-- )
 		{
 			ExecutableItem *item = runningItems.at(index);
 
@@ -305,7 +305,7 @@ namespace Lights
 	void Block::ExecuteStartSynchronisedItems()
 	{
 		// First of all removed any start synchronised items from the running list
-		for (int index = runningItems.size() - 1; index >= 0; index--)
+		for ( int index = runningItems.size() - 1; index >= 0; index-- )
 		{
 			ExecutableItem *item = runningItems.at(index);
 
