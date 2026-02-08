@@ -7,15 +7,14 @@ namespace Lights
 	vector<string> Scripting::builtInScript = {"segment fullSegment", "#t on"};
 	vector<string> Scripting::defaultScript =
 	{
-		"trigger cycleTrigger",
-		"randomNumber ledSelector max=50 next=cycleTrigger",
-		"randomNumber hueSelector next=cycleTrigger",
-		"randomNumber valueSelector min=192 max=256 next=cycleTrigger",
-		"randomNumber twinkleNumber min=1 max=4 next=cycleTrigger",
-		"colourHSV hsvProvider hue=hueSelector sat=255 value=valueSelector next=cycleTrigger",
+		"randomNumber ledSelector max=50",
+		"randomNumber hueSelector",
+		"randomNumber valueSelector min=192 max=256",
+		"randomNumber twinkleNumber min=1 max=4",
+		"colourHSV hsvProvider hue=hueSelector sat=255 value=valueSelector",
 		"fade fadeBy10 fadeBy=90",
 		"set setLed colour=hsvProvider startLed=ledSelector",
-		"block setter count=twinkleNumber cycleTrigger setLed",
+		"block setter count=twinkleNumber setLed",
 		"block effect5 delay=50 fadeBy10 setter",
 		"x effect5",
 	};

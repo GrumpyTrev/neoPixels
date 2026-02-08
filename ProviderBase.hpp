@@ -9,10 +9,10 @@ namespace Lights
 	public:
 		virtual void Next() {}
 		virtual void Reset() {}
-		inline void SetSelfIncrement( bool isSelf ) { selfIncrement = isSelf; }
+		inline void SelfIncrement( bool isSelf ) { selfIncrement = isSelf; }
 
 	protected:
-		bool selfIncrement = false;
+		bool selfIncrement = true;
 	};
 
 	template <class T>

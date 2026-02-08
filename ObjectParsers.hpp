@@ -160,7 +160,6 @@ namespace Lights
 				ValueProvider = nullptr;
 				NextTrigger = nullptr;
 				ResetTrigger = nullptr;
-				SelfIncrement = nullptr;
 				Objects.clear();
 				Numbers.clear();
 				Name = "";
@@ -209,7 +208,6 @@ namespace Lights
 			BaseDefinedObject* ValueProvider;
 			BaseDefinedObject* NextTrigger;
 			BaseDefinedObject* ResetTrigger;
-			BaseDefinedObject* SelfIncrement;
 
 			/// @brief The name of the object
 			string Name;

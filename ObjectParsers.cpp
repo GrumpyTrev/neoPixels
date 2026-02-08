@@ -66,7 +66,6 @@ namespace Lights
 		parameterParseMap.emplace("fadeBy", MakeParseData(NumberParameter, storage.IntervalProvider));
 		parameterParseMap.emplace( "next", MakeParseData( TriggerParameter, storage.NextTrigger ) );
 		parameterParseMap.emplace( "reset", MakeParseData( TriggerParameter, storage.ResetTrigger ) );
-		parameterParseMap.emplace( "self", MakeParseData( BooleanParameter, storage.SelfIncrement ) );
 	}
 
 	/// @brief Find a parser for the specified type and run it

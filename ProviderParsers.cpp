@@ -199,6 +199,9 @@ namespace Lights
 		{
 			( (TriggerAction*)storage.NextTrigger )->AddCallback(
 				new Callback<ProviderBase>( provider, &ProviderBase::Next ) );
+
+			// If there is a Next trigger then clear SelfIncrement
+			provider->SelfIncrement( false );
 		}
 
 		if ( storage.ResetTrigger != nullptr )
@@ -206,8 +209,6 @@ namespace Lights
 			( (TriggerAction*)storage.ResetTrigger )->AddCallback(
 				new Callback<ProviderBase>( provider, &ProviderBase::Reset ) );
 		}
-
-		provider->SetSelfIncrement( GetStoredBoolean( false, storage.SelfIncrement ) );
 
 		return provider;
 	}
