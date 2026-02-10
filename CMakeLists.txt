@@ -55,6 +55,7 @@ add_executable(${PROJECT}
 		NumberSineProvider.hpp
 		FadeAction.hpp
 		TriggerAction.hpp
+		StringFormatter.hpp
 		)
 
 target_link_libraries(${PROJECT}

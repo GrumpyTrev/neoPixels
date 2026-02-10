@@ -13,6 +13,7 @@
 #include "ColourHSVProvider.hpp"
 #include "NumberSineProvider.hpp"
 #include "TriggerAction.hpp"
+#include "StringFormatter.hpp"
 
 using namespace std;
 
@@ -35,7 +36,7 @@ namespace Lights
 		}
 		else
 		{
-			errorStream << "Invalid colours for ColourSequenceProvider " << storage.Name;
+			ReportError( "Invalid colours for ColourSequenceProvider %", storage.Name );
 		}
 	}
 
@@ -56,7 +57,7 @@ namespace Lights
 		if ((storage.FadeStartColourProvider == nullptr) || (storage.FadeEndColourProvider == nullptr) ||
 			(storage.IntervalProvider == nullptr))
 		{
-			errorStream << "Parameter missing for ColourFadeProvider " << storage.Name;
+			ReportError( "Parameter missing for ColourFadeProvider %", storage.Name );
 		}
 		else
 		{
@@ -92,7 +93,7 @@ namespace Lights
 		}
 		else
 		{
-			errorStream << "Not enough numbers for NumberProvider " << storage.Name;
+			ReportError( "Not enough numbers for NumberProvider %", storage.Name );
 		}
 	}
 
@@ -144,7 +145,7 @@ namespace Lights
 	{
 		if ((storage.HueProvider == nullptr) || (storage.SatProvider == nullptr) || ( storage.ValueProvider == nullptr))
 		{
-			errorStream << "Missing hue, sat or val provider for " << storage.Name;
+			ReportError( "Missing hue, sat or val provider for %", storage.Name );
 		}
 		else
 		{
@@ -186,7 +187,7 @@ namespace Lights
 		}
 		else
 		{
-			errorStream << "Either no providers or invalid providers for CycleAction " << storage.Name;
+			ReportError( "Either no providers or invalid providers for SegmentProvider %", storage.Name );
 		}
 	}
 

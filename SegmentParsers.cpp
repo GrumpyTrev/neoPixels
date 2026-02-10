@@ -1,6 +1,7 @@
 #include "ObjectParsers.hpp"
 #include "IntervalSegment.hpp"
 #include "DiscreteSegment.hpp"
+#include "StringFormatter.hpp"
 
 using namespace std;
 
@@ -13,7 +14,7 @@ namespace Lights
 		// Make sure that if a start led has been specified then a count has also been specified
 		if ((storage.StartLedProvider != nullptr) && (storage.CountProvider == nullptr))
 		{
-			errorStream << "Invalid number of Leds for segment " << storage.Name;
+			ReportError( "Invalid number of Leds for segment %", storage.Name );
 		}
 		else
 		{
@@ -55,7 +56,7 @@ namespace Lights
 		}
 		else
 		{
-			errorStream << "Start offset or interval not specified for segment " << storage.Name;
+			ReportError( "Start offset or interval not specified for segment %", storage.Name );
 		}
 	}
 
@@ -66,12 +67,11 @@ namespace Lights
 		// There should be at least one pixel number
 		if (storage.Numbers.size() > 0)
 		{
-			StoreObject(new SegmentProvider(new DiscreteSegment(commandStrip, storage.Numbers)),
-						"DiscreteSegment");
+			StoreObject( new SegmentProvider( new DiscreteSegment( commandStrip, storage.Numbers ) ), "DiscreteSegment" );
 		}
 		else
 		{
-			errorStream << "No pixels specified for segment " << storage.Name;
+			ReportError( "No pixels specified for segment %", storage.Name );
 		}
 	}
 }

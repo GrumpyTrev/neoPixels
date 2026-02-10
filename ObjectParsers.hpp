@@ -5,7 +5,7 @@
 #include "BooleanProvider.hpp"
 #include "ExecutableTypeProvider.hpp"
 #include "ObjectStore.hpp"
-#include <sstream>
+#include "StringFormatter.hpp"
 
 using namespace std;
 
@@ -26,7 +26,7 @@ namespace Lights
 
 		/// @brief The error string held in the private stream
 		/// @return
-		inline string ErrorString() { return errorStream.str(); }
+		inline string ErrorString() { return error; }
 
 	private:
 		/// @brief The methods used to create each object type
@@ -65,7 +65,19 @@ namespace Lights
 
 		/// @brief Has an error been found during parsing
 		/// @return
-		inline bool Error() { return errorStream.tellp() > 0; }
+		inline bool Error() { return error.length() > 0; }
+
+		/// @brief Report an error through the 'error' variable
+		/// @tparam T 
+		/// @tparam ...Args 
+		/// @param format 
+		/// @param value 
+		/// @param ...args 
+		template<typename T, typename... Args>
+		inline void ReportError( const char* format, T value, Args... args )
+		{
+			error = StringFormat( format, value, args... );
+		}
 
 		/// @brief The types of named parameters
 		enum ParameterType
@@ -239,7 +251,7 @@ namespace Lights
 		Commander *commander;
 
 		/// @brief Error string
-		ostringstream errorStream;
+		string error;
 
 		/// @brief The one and only ParameterStorage used to hold parameters extracted from the
 		/// Tokeniser

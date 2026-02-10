@@ -2,6 +2,7 @@
 #include "ObjectParsers.hpp"
 #include "ObjectStore.hpp"
 #include "Scripting.hpp"
+#include "StringFormatter.hpp"
 #include <pico/error.h>
 #include <pico/stdio.h>
 #include <iostream>
@@ -10,7 +11,7 @@ using namespace std;
 
 namespace Lights
 {
-	/// @brief Run the specified display. If no display is specified then just run a loop getting a command
+	/// @brief Run the specified block. If no block is specified then just run a loop getting a command
 	/// @param defaultDisplay
 	void Commander::Execute()
 	{
@@ -105,14 +106,12 @@ namespace Lights
 				// Add this character to the command buffer. If it is a CR then attempt to parse the command
 				if (input == '\r')
 				{
-//					putchar('\n');
 					ParseCommand();
 				}
 				else
 				{
 					// Add received char to the command buffer
-					tokens->AddChar((char)input);
-//					putchar(input);
+					tokens->AddChar( (char)input );
 				}
 			}
 
@@ -125,9 +124,6 @@ namespace Lights
 		string line = Scripting::GetLine();
 		if (line.size() > 0)
 		{
-			puts(line.c_str());
-			putchar('\n');
-
 			tokens->Line(line);
 			ParseCommand();
 		}
@@ -138,7 +134,7 @@ namespace Lights
 	{
 		command = NoCommand;
 
-		ostringstream error;
+		string error = "";
 
 		tokens->Tokenise();
 
@@ -153,18 +149,18 @@ namespace Lights
 				// See if any classes have registered for the command
 				if (parsers->ParseDefinition(commandToken) == true)
 				{
-					error << parsers->ErrorString();
+					error = parsers->ErrorString();
 				}
 				else
 				{
-					error << "No such command: " << commandToken;
+					error = StringFormat( "No such command: %", commandToken );
 				}
 			}
 		}
 
-		if (error.tellp() > 0)
+		if ( error.length() > 0 )
 		{
-			cout << error.str() << '\n';
+			cout << error << '\n';
 		}
 	}
 }

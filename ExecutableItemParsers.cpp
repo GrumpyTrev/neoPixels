@@ -7,6 +7,7 @@
 #include "Block.hpp"
 #include "FadeAction.hpp"
 #include "TriggerAction.hpp"
+#include "StringFormatter.hpp"
 
 using namespace std;
 
@@ -22,15 +23,12 @@ namespace Lights
 		// Check for fill colour parameter
 		if (storage.ItemColourProvider == nullptr)
 		{
-			errorStream << "No colour for SetAction " << storage.Name;
+			ReportError( "No colour for SetAction %", storage.Name );
 		}
 		else
 		{
 			ApplyCommonItemParameters(definedAction);
-			definedAction->Provider((ColourProvider *)(storage.ItemColourProvider));
-
-			// Get the pixel number from the optional provider. Leave the PixelProvider as null if
-			// no  number is specified
+			definedAction->Provider( (ColourProvider*)( storage.ItemColourProvider ) );
 			definedAction->PixelProvider((NumberProvider *)storage.StartLedProvider );
 
 			StoreObject(definedAction, "SetAction");
@@ -57,7 +55,7 @@ namespace Lights
 		// Check for fade percentage parameter (stored in the IntervalProvider)
 		if (storage.IntervalProvider == nullptr)
 		{
-			errorStream << "No fade percentage for FadeAction " << storage.Name;
+			ReportError( "No fade percentage for FadeAction %", storage.Name );
 		}
 		else
 		{
@@ -86,8 +84,7 @@ namespace Lights
 		Block *definedBlock = new Block();
 
 		// There should be at least one ExecutableItem
-		if ((storage.Objects.size() > 0) &&
-			(storage.CheckObjectsType<ExecutableItem>() == true))
+		if ( ( storage.Objects.size() > 0 ) && ( storage.CheckObjectsType<ExecutableItem>() == true ) )
 		{
 			ApplyCommonItemParameters(definedBlock);
 
@@ -100,7 +97,7 @@ namespace Lights
 		}
 		else
 		{
-			errorStream << "Either no items or invalid items for Block " << storage.Name;
+			ReportError( "Either no items or invalid items for Block %", storage.Name );
 		}
 	}
 

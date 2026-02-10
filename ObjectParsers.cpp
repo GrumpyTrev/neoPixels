@@ -6,6 +6,7 @@
 #include "Block.hpp"
 #include "Commander.hpp"
 #include "TriggerAction.hpp"
+#include "StringFormatter.hpp"
 
 using namespace std;
 
@@ -74,13 +75,13 @@ namespace Lights
 	bool ObjectParsers::ParseDefinition(string typeName)
 	{
 		bool found = false;
+		error = "";
 
 		// Look for commands first
 		map<string, DefinitionParser>::iterator it = commandMap.find(typeName);
 		if (it != commandMap.end())
 		{
 			found = true;
-			errorStream.str("");
 
 			// Process the command
 			(this->*it->second)();
@@ -94,7 +95,6 @@ namespace Lights
 				cout << "Found parser for " << typeName << "\n";
 
 				found = true;
-				errorStream.str("");
 
 				// Extract parameters from the tokens
 				if (ExtractParameters() == true)
@@ -130,7 +130,7 @@ namespace Lights
 		}
 		else
 		{
-			errorStream << "Invalid number of numbers for a colour definition" << storage.Name;
+			ReportError( "Invalid number of numbers for a colour definition %", storage.Name );
 		}
 	}
 
@@ -148,12 +148,12 @@ namespace Lights
 			}
 			else
 			{
-				errorStream << "Brightness value is not valid: " << tokens->Current();
+				ReportError( "Brightness value is not valid: %", tokens->Current() );
 			}
 		}
 		else
 		{
-			errorStream << "Expected a brightness value";
+			error = "Expected a brightness value";
 		}
 	}
 
@@ -168,7 +168,7 @@ namespace Lights
 		}
 		else
 		{
-			errorStream << "Invalid number of tokens for a trace command";
+			error = "Invalid number of tokens for a trace command";
 		}
 	}
 
@@ -189,12 +189,12 @@ namespace Lights
 			}
 			else
 			{
-				errorStream << "Cannot find block " << blockName;
+				ReportError( "Cannot find block %", blockName );
 			}
 		}
 		else
 		{
-			errorStream << "Invalid number of tokens for a block execution command";
+			error = "Invalid number of tokens for a block execution command";
 		}
 	}
 
@@ -241,7 +241,7 @@ namespace Lights
 					}
 					else
 					{
-						errorStream << "Unknown parameter " << parameter;
+						ReportError( "Unknown parameter %", parameter );
 					}
 				}
 				else
@@ -276,7 +276,7 @@ namespace Lights
 							}
 							else
 							{
-								errorStream << token << " is not a number, colour or stored object";
+								ReportError( "% is not a number, colour or stored object", token );
 							}
 						}
 					}
@@ -285,7 +285,7 @@ namespace Lights
 		}
 		else
 		{
-			errorStream << "Missing object name";
+			error = "Missing object name";
 		}
 
 		return Error() == false;
@@ -311,7 +311,7 @@ namespace Lights
 				NumberProvider *parsedObject = dynamic_cast<NumberProvider *>(objectStorage.GetObject(value));
 				if (parsedObject == nullptr)
 				{
-					errorStream << value << " is not a NumberProvider";
+					ReportError( "% is not a NumberProvider", value );
 				}
 				else
 				{
@@ -325,7 +325,7 @@ namespace Lights
 			SegmentProvider *parsedObject = dynamic_cast<SegmentProvider *>(objectStorage.GetObject(value));
 			if (parsedObject == nullptr)
 			{
-				errorStream << value << " is not a SegmentProvider";
+				ReportError( "% is not a SegmentProvider", value );
 			}
 			else
 			{
@@ -345,7 +345,7 @@ namespace Lights
 			}
 			else
 			{
-				errorStream << value << " is not a Boolean";
+				ReportError( "% is not a Boolean", value );
 			}
 		}
 		else if (parseData.Type == ColourParameter)
@@ -359,7 +359,7 @@ namespace Lights
 
 				if (parseData.StorageLocation == nullptr)
 				{
-					errorStream << "Colour " << value << " not known";
+					ReportError( "Colour % not known", value );
 				}
 			}
 			else
@@ -372,7 +372,7 @@ namespace Lights
 			ExecutableItem::SynchType itemType = ExecutableItem::sequential;
 			if (ExecutableItem::TypeFromString(value, itemType) == false)
 			{
-				errorStream << value << " is not a valid Item type";
+				ReportError( "% is not a valid Item type", value );
 			}
 			else
 			{
@@ -385,7 +385,7 @@ namespace Lights
 			TriggerAction* parsedObject = dynamic_cast<TriggerAction*>( objectStorage.GetObject( value ) );
 			if ( parsedObject == nullptr )
 			{
-				errorStream << value << " is not a TriggerAction";
+				ReportError( "% is not a TriggerAction", value );
 			}
 			else
 			{
