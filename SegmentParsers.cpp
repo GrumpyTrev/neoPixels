@@ -11,29 +11,23 @@ namespace Lights
 	/// @return
 	void ObjectParsers::MakeSegment()
 	{
-		// Make sure that if a start led has been specified then a count has also been specified
-		if ((storage.StartLedProvider != nullptr) && (storage.CountProvider == nullptr))
+		// Get the start LED number, number of LEDs and reverse flag
+		uint16_t startLed = GetStoredNumber( 0, storage.Led );
+		uint16_t numLeds = GetStoredNumber( commandStrip->NumLeds(), storage.Count );
+		bool reverse = GetStoredBoolean( false, storage.ReverseFlag );
+
+		// Make sure the numbers make sense
+		if ( ( ( startLed + numLeds ) > commandStrip->NumLeds() ) || ( numLeds == 0 ) )
 		{
-			ReportError( "Invalid number of Leds for segment %", storage.Name );
+			ReportError( "Start LED number or number of LEDs invalid for segment %", storage.Name );
 		}
 		else
 		{
-			// Get the start led, count and reverse flag
-			uint16_t startIndex = GetStoredNumber( 0, storage.StartLedProvider );
-			uint16_t numLeds = GetStoredNumber( commandStrip->NumLeds(), storage.CountProvider );
-			bool reverse = GetStoredBoolean(false, storage.ReverseProvider);
+			Segment* segment = ( reverse == true )
+				? new IntervalSegment( commandStrip, startLed, 1, startLed + numLeds - 1, true )
+				: new Segment( commandStrip, startLed, numLeds );
 
-			Segment *sequence = nullptr;
-			if (reverse == true)
-			{
-				sequence = new IntervalSegment(commandStrip, startIndex, 1, startIndex + numLeds - 1, true);
-			}
-			else
-			{
-				sequence = new Segment(commandStrip, startIndex, numLeds);
-			}
-
-			StoreObject(new SegmentProvider(sequence), "Segment");
+			StoreObject( new SegmentProvider( segment ), "Segment" );
 		}
 	}
 
@@ -41,22 +35,22 @@ namespace Lights
 	/// @return
 	void ObjectParsers::MakeIntervalSegment()
 	{
-		// Make sure the start and interval have been specified.
-		if ((storage.StartLedProvider != nullptr) && (storage.IntervalProvider != nullptr))
-		{
-			// Get the start, interval, number of Leds and the reverse flag
-			uint16_t startIndex = GetStoredNumber( 0, storage.StartLedProvider );
-			uint16_t interval = GetStoredNumber( 0, storage.IntervalProvider );
-			uint16_t maxLed = GetStoredNumber( commandStrip->NumLeds() - 1, storage.CountProvider );
-			bool reverse = GetStoredBoolean(false, storage.ReverseProvider);
+		// Get the start, interval, number of Leds and the reverse flag
+		uint16_t startLed = GetStoredNumber( 0, storage.Led );
+		uint16_t interval = GetStoredNumber( 0, storage.Interval );
+		uint16_t maxLed = GetStoredNumber( commandStrip->NumLeds() - 1, storage.Count );
+		bool reverse = GetStoredBoolean( false, storage.ReverseFlag );
 
-			StoreObject(new SegmentProvider(
-							new IntervalSegment(commandStrip, startIndex, interval, maxLed, reverse)),
-						"IntervalSegment");
+		// Make sure the numbers make sense
+		if ( ( interval == 0 ) || ( ( startLed + maxLed ) >= commandStrip->NumLeds() ) ||
+			( maxLed < startLed ) )
+		{
+			ReportError( "Start LED number, interval or maximum LED invalid for segment %", storage.Name );
 		}
 		else
 		{
-			ReportError( "Start offset or interval not specified for segment %", storage.Name );
+			StoreObject( new SegmentProvider( new IntervalSegment( commandStrip, startLed, interval, maxLed, reverse ) ),
+				"IntervalSegment" );
 		}
 	}
 
@@ -64,14 +58,14 @@ namespace Lights
 	/// @return
 	void ObjectParsers::MakeDiscreteSegment()
 	{
-		// There should be at least one pixel number
-		if (storage.Numbers.size() > 0)
+		// There should be at least one LED number
+		if ( storage.Numbers.size() > 0 )
 		{
 			StoreObject( new SegmentProvider( new DiscreteSegment( commandStrip, storage.Numbers ) ), "DiscreteSegment" );
 		}
 		else
 		{
-			ReportError( "No pixels specified for segment %", storage.Name );
+			ReportError( "No LEDs specified for segment %", storage.Name );
 		}
 	}
 }

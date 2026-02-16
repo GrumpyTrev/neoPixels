@@ -154,24 +154,29 @@ namespace Lights
 			/// @brief Clear the struct
 			inline void ClearData()
 			{
-				DelayProvider = nullptr;
-				CountProvider = nullptr;
-				TimeProvider = nullptr;
-				SegmentProvider = nullptr;
-				StartLedProvider = nullptr;
-				ReverseProvider = nullptr;
-				IntervalProvider = nullptr;
-				FadeStartColourProvider = nullptr;
-				FadeEndColourProvider = nullptr;
-				MinRangeProvider = nullptr;
-				MaxRangeProvider = nullptr;
-				ItemTypeProvider = nullptr;
-				ItemColourProvider = nullptr;
-				HueProvider = nullptr;
-				SatProvider = nullptr;
-				ValueProvider = nullptr;
+				Delay = nullptr;
+				Count = nullptr;
+				Time = nullptr;
+				Segment = nullptr;
+				Led = nullptr;
+				ReverseFlag = nullptr;
+				Interval = nullptr;
+				StartColour = nullptr;
+				EndColour = nullptr;
+				Min = nullptr;
+				Max = nullptr;
+				ExecutionType = nullptr;
+				Colour = nullptr;
+				Hue = nullptr;
+				Sat = nullptr;
+				Value = nullptr;
 				NextTrigger = nullptr;
 				ResetTrigger = nullptr;
+				FillFlag = nullptr;
+				FadeAmount = nullptr;
+				When = nullptr;
+				WhenNot = nullptr;
+				Init = nullptr;
 				Objects.clear();
 				Numbers.clear();
 				Name = "";
@@ -183,7 +188,7 @@ namespace Lights
 
 			/// @brief Add a number
 			/// @param numberToAdd
-			inline void AddNumber( uint16_t numberToAdd ) { Numbers.push_back( numberToAdd ); }
+			inline void AddNumber( uint32_t numberToAdd ) { Numbers.push_back( numberToAdd ); }
 
 			/// @brief Check that all the stored objects are of a specified type
 			/// @tparam T
@@ -202,24 +207,29 @@ namespace Lights
 			}
 
 			/// @brief The providers holding the named parameters
-			BaseDefinedObject *DelayProvider;
-			BaseDefinedObject *CountProvider;
-			BaseDefinedObject *TimeProvider;
-			BaseDefinedObject *SegmentProvider;
-			BaseDefinedObject *StartLedProvider;
-			BaseDefinedObject *ReverseProvider;
-			BaseDefinedObject *IntervalProvider;
-			BaseDefinedObject *FadeStartColourProvider;
-			BaseDefinedObject *FadeEndColourProvider;
-			BaseDefinedObject *MinRangeProvider;
-			BaseDefinedObject *MaxRangeProvider;
-			BaseDefinedObject *ItemTypeProvider;
-			BaseDefinedObject *ItemColourProvider;
-			BaseDefinedObject *HueProvider;
-			BaseDefinedObject *SatProvider;
-			BaseDefinedObject* ValueProvider;
+			BaseDefinedObject* Delay;
+			BaseDefinedObject* Count;
+			BaseDefinedObject* Time;
+			BaseDefinedObject* Segment;
+			BaseDefinedObject* Led;
+			BaseDefinedObject* ReverseFlag;
+			BaseDefinedObject* Interval;
+			BaseDefinedObject* StartColour;
+			BaseDefinedObject* EndColour;
+			BaseDefinedObject* Min;
+			BaseDefinedObject* Max;
+			BaseDefinedObject* ExecutionType;
+			BaseDefinedObject* Colour;
+			BaseDefinedObject* Hue;
+			BaseDefinedObject* Sat;
+			BaseDefinedObject* Value;
 			BaseDefinedObject* NextTrigger;
 			BaseDefinedObject* ResetTrigger;
+			BaseDefinedObject* FillFlag;
+			BaseDefinedObject* FadeAmount;
+			BaseDefinedObject* When;
+			BaseDefinedObject* WhenNot;
+			BaseDefinedObject* Init;
 
 			/// @brief The name of the object
 			string Name;
@@ -228,7 +238,7 @@ namespace Lights
 			vector<BaseDefinedObject *> Objects;
 
 			/// @brief Any numbers defined for the object
-			vector<uint16_t> Numbers;
+			vector<uint32_t> Numbers;
 		};
 
 		/// @brief Define a DefinitionParser as a pointer to a function that returns

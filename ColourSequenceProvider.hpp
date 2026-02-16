@@ -8,6 +8,7 @@ namespace Lights
 	public:
 		inline ColourSequenceProvider() : ColourProvider( Colour::InvalidColour ) {}
 		inline void Next() { providedValue = sequence.Next(); }
+		inline void Reset() { sequence.Reset(); }
 		inline void AddValue( Colour valueToAdd ) { sequence.Add( valueToAdd ); }
 
 	private:

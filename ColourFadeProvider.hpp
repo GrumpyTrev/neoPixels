@@ -10,9 +10,12 @@ namespace Lights
 			: ColourProvider(Colour::InvalidColour), fadeSteps(steps), sourceProvider(source),
 			  destinationProvider(destination) {};
 		void Next();
+		inline void Reset() { initialised = false; }
 		Colour Value();
 
 	private:
+		void InitialiseFade();
+
 		uint16_t fadeSteps = 0;
 		uint16_t fadeInterval = 0;
 		uint16_t fadeCount = 0;

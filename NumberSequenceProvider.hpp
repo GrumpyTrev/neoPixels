@@ -8,6 +8,7 @@ namespace Lights
 	public:
 		inline NumberSequenceProvider() : NumberProvider( 0 ) {}
 		inline void Next() { providedValue = sequence.Next(); }
+		inline void Reset() { sequence.Reset(); }
 		inline void AddValue( uint16_t valueToAdd ) { sequence.Add( valueToAdd ); }
 
 	private:

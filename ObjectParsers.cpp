@@ -33,7 +33,7 @@ namespace Lights
 		parserMap.emplace("randomNumber", &ObjectParsers::MakeRandomNumberProvider);
 		parserMap.emplace("randomNumberSet", &ObjectParsers::MakeRandomNumberSetProvider);
 		parserMap.emplace( "counter", &ObjectParsers::MakeNumberIntervalProvider );
-		parserMap.emplace( "sineSequence", &ObjectParsers::MakeNumberSineProvider );
+		parserMap.emplace( "sine", &ObjectParsers::MakeNumberSineProvider );
 		parserMap.emplace( "set", &ObjectParsers::MakeSetAction );
 		parserMap.emplace("shift", &ObjectParsers::MakeShiftAction);
 		parserMap.emplace( "fade", &ObjectParsers::MakeFadeAction );
@@ -46,27 +46,31 @@ namespace Lights
 		commandMap.emplace("t", &ObjectParsers::TraceCommand);
 
 		// Initialise the parameter name to storage location map
-		parameterParseMap.emplace("delay", MakeParseData(NumberParameter, storage.DelayProvider));
-		parameterParseMap.emplace("count", MakeParseData(NumberParameter, storage.CountProvider));
-		parameterParseMap.emplace("time", MakeParseData(NumberParameter, storage.TimeProvider));
-		parameterParseMap.emplace("segment", MakeParseData(SegmentParameter, storage.SegmentProvider));
-		parameterParseMap.emplace("startLed", MakeParseData(NumberParameter, storage.StartLedProvider));
-		parameterParseMap.emplace("reverse", MakeParseData(BooleanParameter, storage.ReverseProvider));
-		parameterParseMap.emplace("interval", MakeParseData(NumberParameter, storage.IntervalProvider));
-		parameterParseMap.emplace("maxLed", MakeParseData(NumberParameter, storage.CountProvider));
-		parameterParseMap.emplace("start", MakeParseData(ColourParameter, storage.FadeStartColourProvider));
-		parameterParseMap.emplace("end", MakeParseData(ColourParameter, storage.FadeEndColourProvider));
-		parameterParseMap.emplace("step", MakeParseData(NumberParameter, storage.IntervalProvider));
-		parameterParseMap.emplace( "min", MakeParseData( NumberParameter, storage.MinRangeProvider ) );
-		parameterParseMap.emplace( "max", MakeParseData( NumberParameter, storage.MaxRangeProvider ) );
-		parameterParseMap.emplace("type", MakeParseData(ItemTypeParameter, storage.ItemTypeProvider));
-		parameterParseMap.emplace("colour", MakeParseData(ColourParameter, storage.ItemColourProvider));
-		parameterParseMap.emplace("hue", MakeParseData(NumberParameter, storage.HueProvider));
-		parameterParseMap.emplace("sat", MakeParseData(NumberParameter, storage.SatProvider));
-		parameterParseMap.emplace("value", MakeParseData(NumberParameter, storage.ValueProvider));
-		parameterParseMap.emplace("fadeBy", MakeParseData(NumberParameter, storage.IntervalProvider));
+		parameterParseMap.emplace( "delay", MakeParseData( NumberParameter, storage.Delay ) );
+		parameterParseMap.emplace( "count", MakeParseData( NumberParameter, storage.Count ) );
+		parameterParseMap.emplace( "time", MakeParseData( NumberParameter, storage.Time ) );
+		parameterParseMap.emplace( "segment", MakeParseData( SegmentParameter, storage.Segment ) );
+		parameterParseMap.emplace( "led", MakeParseData( NumberParameter, storage.Led ) );
+		parameterParseMap.emplace( "startLed", MakeParseData( NumberParameter, storage.Led ) );
+		parameterParseMap.emplace( "reverse", MakeParseData( BooleanParameter, storage.ReverseFlag ) );
+		parameterParseMap.emplace( "interval", MakeParseData( NumberParameter, storage.Interval ) );
+		parameterParseMap.emplace( "start", MakeParseData( ColourParameter, storage.StartColour ) );
+		parameterParseMap.emplace( "end", MakeParseData( ColourParameter, storage.EndColour ) );
+		parameterParseMap.emplace( "step", MakeParseData( NumberParameter, storage.Interval ) );
+		parameterParseMap.emplace( "min", MakeParseData( NumberParameter, storage.Min ) );
+		parameterParseMap.emplace( "max", MakeParseData( NumberParameter, storage.Max ) );
+		parameterParseMap.emplace( "type", MakeParseData( ItemTypeParameter, storage.ExecutionType ) );
+		parameterParseMap.emplace( "colour", MakeParseData( ColourParameter, storage.Colour ) );
+		parameterParseMap.emplace( "hue", MakeParseData( NumberParameter, storage.Hue ) );
+		parameterParseMap.emplace( "sat", MakeParseData( NumberParameter, storage.Sat ) );
+		parameterParseMap.emplace( "value", MakeParseData( NumberParameter, storage.Value ) );
+		parameterParseMap.emplace( "fade", MakeParseData( NumberParameter, storage.FadeAmount ) );
 		parameterParseMap.emplace( "next", MakeParseData( TriggerParameter, storage.NextTrigger ) );
 		parameterParseMap.emplace( "reset", MakeParseData( TriggerParameter, storage.ResetTrigger ) );
+		parameterParseMap.emplace( "fill", MakeParseData( BooleanParameter, storage.FillFlag ) );
+		parameterParseMap.emplace( "when", MakeParseData( NumberParameter, storage.When ) );
+		parameterParseMap.emplace( "whenNot", MakeParseData( NumberParameter, storage.WhenNot ) );
+		parameterParseMap.emplace( "init", MakeParseData( NumberParameter, storage.Init ) );
 	}
 
 	/// @brief Find a parser for the specified type and run it
@@ -248,14 +252,14 @@ namespace Lights
 				{
 					// The token is not a parameter.
 					// Check if is a number. If it is add it to the storage vector for numbers.
-					// Check if is a colour. If it is then wrap it up in a ColourReference and
+					// Check if is a colour. If it is then wrap it up in a ColourProvider and
 					// add it to the storage vector for objects.
 					// Check if it is a reference to a stored item. If it is then add it to the
 					// storage vector for objects.
 					try
 					{
-						// Try and convert to a number
-						uint16_t number = (uint16_t)stoi( token, nullptr, 0 );
+						// Try and convert to a number. Use uint32_t here as some uses require > 16 bits
+						uint32_t number = (uint32_t)stoi( token, nullptr, 0 );
 						storage.AddNumber(number);
 					}
 					catch (invalid_argument const &ex)

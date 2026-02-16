@@ -1,9 +1,6 @@
 #include "ColourWheelProvider.hpp"
 #include "AnimationHelper.hpp"
 
-// TESTING
-#include <iostream>
-
 namespace Lights
 {
 	/// @brief Supply the next colour.
@@ -15,13 +12,11 @@ namespace Lights
 			colourIndex = AnimationHelper::Random8();
 		}
 
-		// Set hte index to a random value
+		// Set the index to a random value
 		colourIndex = AnimationHelper::RandomColourWheelIndex(colourIndex);
 
 		// Get the value from the colour wheel
-		SetValue(AnimationHelper::ColourWheel(colourIndex));
-
-		cout << "ColourWheelProvider Index " << uint(colourIndex) << " Value " << GetValue().value << "\n";
+		SetValue( AnimationHelper::ColourWheel( colourIndex ) );
 	}
 
 	/// @brief Return the current colour

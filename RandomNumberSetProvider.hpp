@@ -13,6 +13,8 @@ namespace Lights
 
 		void Next();
 
+		inline void Reset() { numberset.clear(); Next(); }
+
 	private:
 		vector<uint16_t> numberset;
 	};

@@ -31,6 +31,8 @@ namespace Lights
 
 			return retVal;
 		}
+		inline void Reset() { index = 0; }
+
 	private:
 		std::vector<T> sequence;
 		uint16_t index = 0;

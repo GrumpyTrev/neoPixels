@@ -54,17 +54,17 @@ namespace Lights
 	void ObjectParsers::MakeColourFadeProvider()
 	{
 		// There should be two colour references and a step count.
-		if ((storage.FadeStartColourProvider == nullptr) || (storage.FadeEndColourProvider == nullptr) ||
-			(storage.IntervalProvider == nullptr))
+		if ( ( storage.StartColour == nullptr ) || ( storage.EndColour == nullptr ) ||
+			( storage.Interval == nullptr ) )
 		{
 			ReportError( "Parameter missing for ColourFadeProvider %", storage.Name );
 		}
 		else
 		{
 			StoreObject( ApplyCommonProviderParameters(
-				new ColourFadeProvider( (ColourProvider*)( storage.FadeStartColourProvider ),
-					(ColourProvider*)( storage.FadeEndColourProvider ),
-					GetStoredNumber( 0, storage.IntervalProvider ) ) ),
+				new ColourFadeProvider( (ColourProvider*)( storage.StartColour ),
+					(ColourProvider*)( storage.EndColour ),
+					GetStoredNumber( 0, storage.Interval ) ) ),
 				"ColourFadeProvider" );
 		}
 	};
@@ -102,8 +102,8 @@ namespace Lights
 	/// @return
 	void ObjectParsers::MakeRandomNumberProvider()
 	{
-		StoreObject( ApplyCommonProviderParameters( new RandomNumberProvider( GetStoredNumber( 0, storage.MinRangeProvider ),
-			GetStoredNumber( (uint16_t)65535, storage.MaxRangeProvider ) ) ),
+		StoreObject( ApplyCommonProviderParameters( new RandomNumberProvider( GetStoredNumber( 0, storage.Min ),
+			GetStoredNumber( (uint16_t)65535, storage.Max ) ) ),
 			"RandomNumberProvider" );
 	}
 
@@ -112,8 +112,8 @@ namespace Lights
 	/// @return
 	void ObjectParsers::MakeRandomNumberSetProvider()
 	{
-		StoreObject( ApplyCommonProviderParameters( new RandomNumberSetProvider( GetStoredNumber( 0, storage.MinRangeProvider ),
-			GetStoredNumber( (uint16_t)65535, storage.MaxRangeProvider ) ) ),
+		StoreObject( ApplyCommonProviderParameters( new RandomNumberSetProvider( GetStoredNumber( 0, storage.Min ),
+			GetStoredNumber( (uint16_t)65535, storage.Max ) ) ),
 			"RandomNumberSetProvider" );
 	}
 	
@@ -123,16 +123,16 @@ namespace Lights
 	void ObjectParsers::MakeNumberIntervalProvider()
 	{
 		// If the minimum or maximum are not specified then make number providers for them
-		NumberProvider* minProvider = ( storage.MinRangeProvider != nullptr ) ?
-			(NumberProvider*)storage.MinRangeProvider : new NumberProvider( 0 );
-		NumberProvider* maxProvider = ( storage.MaxRangeProvider != nullptr ) ?
-			(NumberProvider*)storage.MaxRangeProvider : new NumberProvider( uint16_t( 65535 ) );
+		NumberProvider* minProvider = ( storage.Min != nullptr ) ?
+			(NumberProvider*)storage.Min : new NumberProvider( 0 );
+		NumberProvider* maxProvider = ( storage.Max != nullptr ) ?
+			(NumberProvider*)storage.Max : new NumberProvider( uint16_t( 65535 ) );
 
 		// The step is optional
-		uint16_t step = GetStoredNumber( 1, storage.IntervalProvider );
+		uint16_t step = GetStoredNumber( 1, storage.Interval );
 
 		// The reverse is optional
-		bool reverse = GetStoredBoolean( false, storage.ReverseProvider );
+		bool reverse = GetStoredBoolean( false, storage.ReverseFlag );
 
 		StoreObject( ApplyCommonProviderParameters(
 			new NumberIntervalProvider( minProvider, maxProvider, step, reverse ) ), "NumberIntervalProvider" );
@@ -143,15 +143,15 @@ namespace Lights
 	/// @return
 	void ObjectParsers::MakeColourHSVProvider()
 	{
-		if ((storage.HueProvider == nullptr) || (storage.SatProvider == nullptr) || ( storage.ValueProvider == nullptr))
+		if ( ( storage.Hue == nullptr ) || ( storage.Sat == nullptr ) || ( storage.Value == nullptr ) )
 		{
 			ReportError( "Missing hue, sat or val provider for %", storage.Name );
 		}
 		else
 		{
 			StoreObject( ApplyCommonProviderParameters(
-				new ColourHSVProvider( (NumberProvider*)storage.HueProvider, (NumberProvider*)storage.SatProvider,
-					(NumberProvider*)storage.ValueProvider, GetStoredNumber( 0, storage.IntervalProvider ) ) ),
+				new ColourHSVProvider( (NumberProvider*)storage.Hue, (NumberProvider*)storage.Sat,
+					(NumberProvider*)storage.Value, GetStoredNumber( 0, storage.Interval ) ) ),
 				"ColourHSVProvider" );
 		}
 	}
@@ -161,10 +161,9 @@ namespace Lights
 	/// @return
 	void ObjectParsers::MakeNumberSineProvider()
 	{
-		// The step is optional
-		uint16_t step = GetStoredNumber( 1, storage.IntervalProvider );
-
-		StoreObject( ApplyCommonProviderParameters( new NumberSineProvider( step ) ), "NumberSineProvider" );
+		StoreObject( ApplyCommonProviderParameters(
+			new NumberSineProvider( GetStoredNumber( 1, storage.Interval ), (NumberProvider*)storage.Init ) ),
+			"NumberSineProvider" );
 	}
 
 	/// @brief Make a SegmentSequenceProvider from the ParameterStorage
@@ -172,9 +171,8 @@ namespace Lights
 	/// @return
 	void ObjectParsers::MakeSegmentSequence()
 	{
-		// There should be at least one segmemnt provider
-		if ((storage.Objects.size() > 0) &&
-			(storage.CheckObjectsType<SegmentProvider>() == true))
+		// There should be at least one segment provider and they should all be SegmentProviders
+		if ( ( storage.Objects.size() > 0 ) && ( storage.CheckObjectsType<SegmentProvider>() == true ) )
 		{
 			SegmentSequenceProvider *definedObject = new SegmentSequenceProvider();
 

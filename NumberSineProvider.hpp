@@ -6,24 +6,41 @@ namespace Lights
 	class NumberSineProvider : public NumberProvider
 	{
 	public:
-        inline NumberSineProvider( uint16_t step ) : interval( step ), NumberProvider( SineTable[ 0 ] ) {};
+        inline NumberSineProvider( uint8_t step, NumberProvider* start ) : interval( step ), startProvider( start ),
+            NumberProvider( 0 )
+        {
+            Reset();
+        };
 
 		/// @brief Supply the next number
         inline void Next()
-		{
+        {
+            // Get the next value. Note that this will wrap around at 256
             index += interval;
             SetValue( SineTable[index]);
-		}
+        }
+
+        /// @brief Reset the provider
+        inline void Reset()
+        {
+            // Initialise the index. This will just take the loweset 8 bits of any long startProvider value
+            index = startProvider == nullptr ? 0 : startProvider->Value();
+            SetValue( SineTable[ index ] );
+        }
 
 	protected:
+
+
+    private:
         /// @brief The interval between supplied sine values
-        uint16_t interval;
+        uint8_t interval;
 
         /// @brief The index into the sine table of the last value
         uint8_t index = 0;
 
-    private:
-    
+        /// @brief Optional start provider
+        NumberProvider* startProvider = nullptr;
+
         /* A table containing 8-bit unsigned sine wave (0-255).
         Copy & paste this snippet into a Python REPL to regenerate:
         import math

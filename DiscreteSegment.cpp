@@ -2,7 +2,7 @@
 
 namespace Lights
 {
-	DiscreteSegment::DiscreteSegment( LedStrip* target, vector<uint16_t> pixels ) : MappedSegment( target )
+	DiscreteSegment::DiscreteSegment( LedStrip* target, vector<uint32_t> pixels ) : MappedSegment( target )
 	{
 		numLeds = pixels.size();
 

@@ -2,9 +2,6 @@
 #include "ColourProvider.hpp"
 #include "NumberProvider.hpp"
 
-// TESTING
-#include <iostream>
-
 namespace Lights
 {
     /// @brief The ColourHSVProvider class provides a Colour based on the suppied hue, value and saturation values
@@ -29,11 +26,9 @@ namespace Lights
             }
 
             uint8_t sat = satProvider->Value();
-            uint16_t value = valProvider->Value();
+            uint8_t value = valProvider->Value();
             SetValue( Colour::ColourHSV( hue, sat, value ) );
-
-            // cout << "ColourHSVProvider " << hue << " " << (uint16_t)sat << " " << value << "\n";
-		}
+        }
 
         /// @brief Return the current colour
         /// @return

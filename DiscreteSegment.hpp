@@ -11,7 +11,7 @@ namespace Lights
 	class DiscreteSegment : public MappedSegment
 	{
 	public:
-		DiscreteSegment( LedStrip* target, vector<uint16_t> pixels );
+		DiscreteSegment( LedStrip* target, vector<uint32_t> pixels );
 
 	private:
 	};

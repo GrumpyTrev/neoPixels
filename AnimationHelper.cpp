@@ -77,7 +77,7 @@ namespace Lights
 		return randomSeed16;
 	}
 
-	/// Generate an 8-bit random number between 0 and lim
+	/// Generate 16-bit random number between 0 and lim
 	/// @param lim the upper bound for the result, exclusive
 	uint16_t AnimationHelper::Random16( uint16_t lim )
 	{

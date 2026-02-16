@@ -31,7 +31,7 @@ namespace Lights
 		/// @return 
 		inline virtual uint16_t GetValue() { return providedValue; }
 
-		/// @brief Directly set the uncerlyinmg value
+		/// @brief Directly set the underlyinmg value
 		/// @param value 
 		inline virtual void SetValue( uint16_t value ) { providedValue = value; }
 

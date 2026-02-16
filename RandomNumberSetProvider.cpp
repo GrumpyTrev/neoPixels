@@ -10,15 +10,15 @@ namespace Lights
 	{
 		if (numberset.size() == 0)
 		{
-			// Fill the set with the sequence of numbers from 'minimum' to 'maximum'
-			for ( uint16_t index = minimum; index <= maximum; ++index )
+			// Fill the set with the sequence of numbers from 'minimum' to 'maximum' - 1
+			for ( uint16_t index = minimum; index < maximum; ++index )
 			{
 				numberset.push_back(index);
 			}
 		}
 
-		// Select one of the set at random
-		uint8_t numberIndex = AnimationHelper::Random8( 0, numberset.size() - 1 );
+		// Select one of the set at random. This will be in the range 0 to numberset.size() - 1
+		uint16_t numberIndex = AnimationHelper::Random16( numberset.size() );
 		SetValue(numberset.at(numberIndex));
 
 		// Remove from the set of numbers
