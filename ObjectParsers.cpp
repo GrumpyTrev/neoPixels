@@ -118,19 +118,23 @@ namespace Lights
 	{
 		// Define a color using either RGB values or a combined value
 		// So there should be either 1 or 3 numbers
-		if (storage.Numbers.size() == 1)
+		if ( ( storage.CheckObjectsType<NumberProvider>() == true ) &&
+			( ( storage.Objects.size() == 1 ) || ( storage.Objects.size() == 3 ) ) )
 		{
-			Colour::AddColour(storage.Name, Colour(storage.Numbers[0]));
-			cout << "Added colour " << storage.Name << " value " << storage.Numbers[0] << "\n";
-		}
-		else if (storage.Numbers.size() == 3)
-		{
-			uint16_t redValue = storage.Numbers[ 0 ];
-			uint16_t greenValue = storage.Numbers[ 1 ];
-			uint16_t blueValue = storage.Numbers[ 2 ];
+			if ( storage.Objects.size() == 1 )
+			{
+				Colour::AddColour( storage.Name, Colour( GetStoredNumber( 0 ) ) );
+				cout << "Added colour " << storage.Name << " value " << GetStoredNumber( 0 ) << "\n";
+			}
+			else if ( storage.Objects.size() == 3 )
+			{
+				uint8_t redValue = GetStoredNumber( 0 );
+				uint8_t greenValue = GetStoredNumber( 1 );
+				uint8_t blueValue = GetStoredNumber( 2 );
 
-			Colour::AddColour(storage.Name, Colour(redValue, greenValue, blueValue));
-			cout << "Added colour " << storage.Name << " red " << redValue << " green " << greenValue << " blue " << blueValue << "\n";
+				Colour::AddColour( storage.Name, Colour( redValue, greenValue, blueValue ) );
+				cout << "Added colour " << storage.Name << " red " << redValue << " green " << greenValue << " blue " << blueValue << "\n";
+			}
 		}
 		else
 		{
@@ -145,8 +149,8 @@ namespace Lights
 		// The brightness command expects a numeric value
 		if (tokens->TokensLeft() == 1)
 		{
-			uint16_t brightnessValue;
-			if (tokens->NextUint(brightnessValue) == true)
+			int32_t brightnessValue;
+			if ( ( tokens->NextInt( brightnessValue ) == true ) && ( brightnessValue >= 0 ) && ( brightnessValue < 256 ) )
 			{
 				commandStrip->SetBrightness(brightnessValue);
 			}
@@ -157,7 +161,7 @@ namespace Lights
 		}
 		else
 		{
-			error = "Expected a brightness value";
+			ReportError( "Expected a brightness value" );
 		}
 	}
 
@@ -172,7 +176,7 @@ namespace Lights
 		}
 		else
 		{
-			error = "Invalid number of tokens for a trace command";
+			ReportError( "Invalid number of tokens for a trace command" );
 		}
 	}
 
@@ -198,7 +202,7 @@ namespace Lights
 		}
 		else
 		{
-			error = "Invalid number of tokens for a block execution command";
+			ReportError( "Invalid number of tokens for a block execution command" );
 		}
 	}
 
@@ -258,9 +262,8 @@ namespace Lights
 					// storage vector for objects.
 					try
 					{
-						// Try and convert to a number. Use uint32_t here as some uses require > 16 bits
-						uint32_t number = (uint32_t)stoi( token, nullptr, 0 );
-						storage.AddNumber(number);
+						// Try and convert to a number.
+						storage.AddObject( new NumberProvider( (int32_t)stoi( token, nullptr, 0 ) ) );
 					}
 					catch (invalid_argument const &ex)
 					{
@@ -289,7 +292,7 @@ namespace Lights
 		}
 		else
 		{
-			error = "Missing object name";
+			ReportError( "Missing object name" );
 		}
 
 		return Error() == false;
@@ -306,8 +309,7 @@ namespace Lights
 			// Look for a number or a referenced NumberProvider
 			try
 			{
-				uint16_t number = (uint16_t)stoi( value, nullptr, 0 );
-				parseData.StorageLocation = new NumberProvider(number);
+				parseData.StorageLocation = new NumberProvider( (int32_t)stoi( value, nullptr, 0 ) );
 			}
 			catch (invalid_argument const &ex)
 			{

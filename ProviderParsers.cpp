@@ -62,10 +62,8 @@ namespace Lights
 		else
 		{
 			StoreObject( ApplyCommonProviderParameters(
-				new ColourFadeProvider( (ColourProvider*)( storage.StartColour ),
-					(ColourProvider*)( storage.EndColour ),
-					GetStoredNumber( 0, storage.Interval ) ) ),
-				"ColourFadeProvider" );
+				new ColourFadeProvider( (ColourProvider*)( storage.StartColour ), (ColourProvider*)( storage.EndColour ),
+					GetStoredNumber( 0, storage.Interval ) ) ), "ColourFadeProvider" );
 		}
 	};
 
@@ -74,19 +72,19 @@ namespace Lights
 	{
 		// This is going to be a NumberProvider or a NumberSequenceProvider depending on the
 		// number of numbers provided
-		if (storage.Numbers.size() > 0)
+		if ( ( storage.Objects.size() > 0 ) && ( storage.CheckObjectsType<NumberProvider>() == true ) )
 		{
-			if (storage.Numbers.size() == 1)
+			if ( storage.Objects.size() == 1 )
 			{
-				NumberProvider* provider = new NumberProvider( storage.Numbers.at( 0 ) );
+				NumberProvider* provider = new NumberProvider( GetStoredNumber( 0 ) );
 				StoreObject( ApplyCommonProviderParameters( provider ), "NumberProvider" );
 			}
 			else
 			{
 				NumberSequenceProvider* provider = new NumberSequenceProvider();
-				for ( uint16_t number : storage.Numbers )
+				for ( uint32_t index = 0; index < storage.Objects.size(); index++ )
 				{
-					provider->AddValue(number);
+					provider->AddValue( GetStoredNumber( index ) );
 				}
 				StoreObject( ApplyCommonProviderParameters( provider ), "NumberSequenceProvider" );
 			}
@@ -102,9 +100,18 @@ namespace Lights
 	/// @return
 	void ObjectParsers::MakeRandomNumberProvider()
 	{
-		StoreObject( ApplyCommonProviderParameters( new RandomNumberProvider( GetStoredNumber( 0, storage.Min ),
-			GetStoredNumber( (uint16_t)65535, storage.Max ) ) ),
-			"RandomNumberProvider" );
+		int32_t minValue = GetStoredNumber( 0, storage.Min );
+		int32_t maxValue = GetStoredNumber( 65535, storage.Max );
+
+		if ( ( minValue >= 0 ) && ( maxValue <= 65535 ) && ( maxValue >= minValue ) )
+		{
+			StoreObject( ApplyCommonProviderParameters( new RandomNumberProvider( minValue, maxValue ) ),
+				"RandomNumberProvider" );
+		}
+		else
+		{
+			ReportError( "Invalid min or max values for RandomNumberProvider %", storage.Name );
+		}
 	}
 
 	/// @brief Create and store a RandomNumberSetProvider instance
@@ -112,9 +119,18 @@ namespace Lights
 	/// @return
 	void ObjectParsers::MakeRandomNumberSetProvider()
 	{
-		StoreObject( ApplyCommonProviderParameters( new RandomNumberSetProvider( GetStoredNumber( 0, storage.Min ),
-			GetStoredNumber( (uint16_t)65535, storage.Max ) ) ),
-			"RandomNumberSetProvider" );
+		int32_t minValue = GetStoredNumber( 0, storage.Min );
+		int32_t maxValue = GetStoredNumber( 65535, storage.Max );
+
+		if ( ( minValue >= 0 ) && ( maxValue <= 65535 ) && ( maxValue >= minValue ) )
+		{
+			StoreObject( ApplyCommonProviderParameters( new RandomNumberSetProvider( minValue, maxValue ) ),
+				"RandomNumberProvider" );
+		}
+		else
+		{
+			ReportError( "Invalid min or max values for RandomNumberSetProvider %", storage.Name );
+		}
 	}
 	
 	/// @brief Create and store a NumberIntervalProvider instance
@@ -126,16 +142,11 @@ namespace Lights
 		NumberProvider* minProvider = ( storage.Min != nullptr ) ?
 			(NumberProvider*)storage.Min : new NumberProvider( 0 );
 		NumberProvider* maxProvider = ( storage.Max != nullptr ) ?
-			(NumberProvider*)storage.Max : new NumberProvider( uint16_t( 65535 ) );
-
-		// The step is optional
-		uint16_t step = GetStoredNumber( 1, storage.Interval );
-
-		// The reverse is optional
-		bool reverse = GetStoredBoolean( false, storage.ReverseFlag );
+			(NumberProvider*)storage.Max : new NumberProvider( 65535 );
 
 		StoreObject( ApplyCommonProviderParameters(
-			new NumberIntervalProvider( minProvider, maxProvider, step, reverse ) ), "NumberIntervalProvider" );
+			new NumberIntervalProvider( minProvider, maxProvider, GetStoredNumber( 1, storage.Interval ),
+				GetStoredBoolean( false, storage.ReverseFlag ) ) ), "NumberIntervalProvider" );
 	}
 
 	/// @brief Create and store a ColourHSVProvider instance
@@ -151,8 +162,7 @@ namespace Lights
 		{
 			StoreObject( ApplyCommonProviderParameters(
 				new ColourHSVProvider( (NumberProvider*)storage.Hue, (NumberProvider*)storage.Sat,
-					(NumberProvider*)storage.Value, GetStoredNumber( 0, storage.Interval ) ) ),
-				"ColourHSVProvider" );
+					(NumberProvider*)storage.Value, GetStoredNumber( 0, storage.Interval ) ) ), "ColourHSVProvider" );
 		}
 	}
 
@@ -161,9 +171,17 @@ namespace Lights
 	/// @return
 	void ObjectParsers::MakeNumberSineProvider()
 	{
-		StoreObject( ApplyCommonProviderParameters(
-			new NumberSineProvider( GetStoredNumber( 1, storage.Interval ), (NumberProvider*)storage.Init ) ),
-			"NumberSineProvider" );
+		// Get the optional waveLength ( stored in Interval ), and check it is in range
+		int32_t waveLength = GetStoredNumber( 256, storage.Interval );
+		if ( ( waveLength > 0 ) && ( waveLength <= 256 ) )
+		{
+			StoreObject( ApplyCommonProviderParameters(
+				new NumberSineProvider( waveLength, (NumberProvider*)storage.Init ) ), "NumberSineProvider" );
+		}
+		else
+		{
+			ReportError( "Invalid wavelength value for MakeNumberSineProvider %", storage.Name );
+		}
 	}
 
 	/// @brief Make a SegmentSequenceProvider from the ParameterStorage

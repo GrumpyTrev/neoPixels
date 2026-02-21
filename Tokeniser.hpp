@@ -31,11 +31,11 @@ namespace Lights
 		/// @return
 		inline uint TokensLeft() { return tokens.size() - tokenIndex; }
 
-		/// @brief Get the next unsigned integer from the command line.
+		/// @brief Get the next integer from the command line.
 		/// Set the error flag if there are no more tokens or if the token is not a valid integer
-		/// @param value Reference to uint that value should be returned in
+		/// @param value Reference to int that value should be returned in
 		/// @return Returns true if a valid integer was returned in the reference parameter
-		bool NextUint( uint16_t& value );
+		bool NextInt( int32_t& value );
 
 		/// @brief The current token being processed
 		/// @return

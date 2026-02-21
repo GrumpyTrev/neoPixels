@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include "MappedSegment.hpp"
 
 using namespace std;
@@ -11,7 +10,14 @@ namespace Lights
 	class DiscreteSegment : public MappedSegment
 	{
 	public:
-		DiscreteSegment( LedStrip* target, vector<uint32_t> pixels );
+		inline DiscreteSegment( LedStrip* target, vector<uint16_t> pixels ) : MappedSegment( target )
+		{
+			numLeds = pixels.size();
+
+			// Initialise the map
+			pixelMap = new uint16_t[ numLeds ];
+			copy( pixels.begin(), pixels.end(), pixelMap );
+		}
 
 	private:
 	};

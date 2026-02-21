@@ -77,7 +77,7 @@ namespace Lights
 			{
 				if (stillExecuting == true)
 				{
-					uint delayInMs = absolute_time_diff_us(get_absolute_time(), delayTime) / 1000;
+					int64_t delayInMs = absolute_time_diff_us( get_absolute_time(), delayTime ) / 1000;
 					if (nextItemToRun != nullptr)
 					{
 						cout << TimeDisplay() << "Block " << Name() << " finished. Op count " << operationCount << " Item post delay " << delayInMs << "\n";
@@ -173,7 +173,7 @@ namespace Lights
 
 		// If this is not a timed execution then check whether the execution count
 		// has been exceeded
-		uint countLimit = (counter != nullptr) ? counter->Value() : 1;
+		uint16_t countLimit = ( counter != nullptr ) ? counter->Value() : 1;
 
 		if ((executionTimer == nullptr) && (operationCount >= countLimit))
 		{
@@ -290,6 +290,7 @@ namespace Lights
 	/// synchronised with the end of the sequence
 	void Block::TerminateEndSynchronisedItems()
 	{
+		// Use an int here as it may go negative
 		for ( int index = runningItems.size() - 1; index >= 0; index-- )
 		{
 			ExecutableItem *item = runningItems.at(index);
@@ -305,6 +306,7 @@ namespace Lights
 	void Block::ExecuteStartSynchronisedItems()
 	{
 		// First of all removed any start synchronised items from the running list
+		// Use an int here as it may go negative
 		for ( int index = runningItems.size() - 1; index >= 0; index-- )
 		{
 			ExecutableItem *item = runningItems.at(index);

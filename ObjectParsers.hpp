@@ -76,8 +76,11 @@ namespace Lights
 		template<typename T, typename... Args>
 		inline void ReportError( const char* format, T value, Args... args )
 		{
-			error = StringFormat( format, value, args... );
+			error = "ERROR " + StringFormat( format, value, args... );
 		}
+
+		/// @brief Report an error through the 'error' variable
+		inline void ReportError( const char* format ) { error = "ERROR" + (string)format; }
 
 		/// @brief The types of named parameters
 		enum ParameterType
@@ -130,13 +133,21 @@ namespace Lights
 			return (provider == nullptr) ? defaultValue : ((BooleanProvider *)(provider))->Value();
 		}
 
-		/// @brief Get a uint value from the provider, if it exists
+		/// @brief Get an int value from the provider, if it exists
 		/// @param defaultValue
 		/// @param provider
 		/// @return
-		uint16_t GetStoredNumber( uint16_t defaultValue, BaseDefinedObject* provider )
+		int32_t GetStoredNumber( int32_t defaultValue, BaseDefinedObject* provider )
 		{
 			return (provider == nullptr) ? defaultValue : ((NumberProvider *)(provider))->Value();
+		}
+
+		/// @brief Get an int value from the object vector at the specified index
+		/// @param index
+		/// @return
+		int32_t GetStoredNumber( uint32_t index )
+		{
+			return ( index >= storage.Objects.size() ) ? 0 : ( (NumberProvider*)( storage.Objects[ index ] ) )->Value();
 		}
 
 		/// @brief Get a SynchType value from the provider, if it exists
@@ -178,17 +189,12 @@ namespace Lights
 				WhenNot = nullptr;
 				Init = nullptr;
 				Objects.clear();
-				Numbers.clear();
 				Name = "";
 			}
 
 			/// @brief Add a referenced object
 			/// @param objectToAdd
 			inline void AddObject(BaseDefinedObject *objectToAdd) { Objects.push_back(objectToAdd); }
-
-			/// @brief Add a number
-			/// @param numberToAdd
-			inline void AddNumber( uint32_t numberToAdd ) { Numbers.push_back( numberToAdd ); }
 
 			/// @brief Check that all the stored objects are of a specified type
 			/// @tparam T
@@ -235,10 +241,7 @@ namespace Lights
 			string Name;
 
 			/// @brief Any stored objects referenced
-			vector<BaseDefinedObject *> Objects;
-
-			/// @brief Any numbers defined for the object
-			vector<uint32_t> Numbers;
+			vector<BaseDefinedObject*> Objects;
 		};
 
 		/// @brief Define a DefinitionParser as a pointer to a function that returns

@@ -47,15 +47,15 @@ namespace Lights
 	/// Set the error flag if there are no more tokens or if the token is not a valid integer
 	/// @param value Reference to uint that value should be returned in
 	/// @return Returns true if a valid integer was returned in the reference parameter
-	bool Tokeniser::NextUint( uint16_t& value )
+	bool Tokeniser::NextInt( int32_t& value )
 	{
-		bool uintFound = false;
+		bool intFound = false;
 		if (TokensLeft() >= 1)
 		{
 			try
 			{
-				value = (uint16_t)stoi( Next(), nullptr, 0 );
-				uintFound = true;
+				value = (int32_t)stoi( Next(), nullptr, 0 );
+				intFound = true;
 			}
 			catch (invalid_argument const &ex)
 			{
@@ -67,6 +67,6 @@ namespace Lights
 			error = true;
 		}
 
-		return uintFound;
+		return intFound;
 	}
 }

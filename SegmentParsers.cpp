@@ -12,12 +12,12 @@ namespace Lights
 	void ObjectParsers::MakeSegment()
 	{
 		// Get the start LED number, number of LEDs and reverse flag
-		uint16_t startLed = GetStoredNumber( 0, storage.Led );
-		uint16_t numLeds = GetStoredNumber( commandStrip->NumLeds(), storage.Count );
+		int32_t startLed = GetStoredNumber( 0, storage.Led );
+		int32_t numLeds = GetStoredNumber( commandStrip->NumLeds(), storage.Count );
 		bool reverse = GetStoredBoolean( false, storage.ReverseFlag );
 
 		// Make sure the numbers make sense
-		if ( ( ( startLed + numLeds ) > commandStrip->NumLeds() ) || ( numLeds == 0 ) )
+		if ( ( startLed < 0 ) || ( numLeds <= 0 ) || ( ( startLed + numLeds ) > commandStrip->NumLeds() ) )
 		{
 			ReportError( "Start LED number or number of LEDs invalid for segment %", storage.Name );
 		}
@@ -36,14 +36,14 @@ namespace Lights
 	void ObjectParsers::MakeIntervalSegment()
 	{
 		// Get the start, interval, number of Leds and the reverse flag
-		uint16_t startLed = GetStoredNumber( 0, storage.Led );
-		uint16_t interval = GetStoredNumber( 0, storage.Interval );
-		uint16_t maxLed = GetStoredNumber( commandStrip->NumLeds() - 1, storage.Count );
+		int32_t startLed = GetStoredNumber( 0, storage.Led );
+		int32_t interval = GetStoredNumber( 0, storage.Interval );
+		int32_t maxLed = GetStoredNumber( commandStrip->NumLeds() - 1, storage.Count );
 		bool reverse = GetStoredBoolean( false, storage.ReverseFlag );
 
 		// Make sure the numbers make sense
-		if ( ( interval == 0 ) || ( ( startLed + maxLed ) >= commandStrip->NumLeds() ) ||
-			( maxLed < startLed ) )
+		if ( ( startLed < 0 ) || ( maxLed < 0 ) || ( ( startLed + maxLed ) > commandStrip->NumLeds() ) ||
+			( maxLed < startLed ) || ( interval < 1 ) )
 		{
 			ReportError( "Start LED number, interval or maximum LED invalid for segment %", storage.Name );
 		}
@@ -59,9 +59,14 @@ namespace Lights
 	void ObjectParsers::MakeDiscreteSegment()
 	{
 		// There should be at least one LED number
-		if ( storage.Numbers.size() > 0 )
+		if ( ( storage.Objects.size() > 0 ) && ( storage.CheckObjectsType<NumberProvider>() == true ) )
 		{
-			StoreObject( new SegmentProvider( new DiscreteSegment( commandStrip, storage.Numbers ) ), "DiscreteSegment" );
+			vector<uint16_t> leds;
+			for ( BaseDefinedObject* provider : storage.Objects )
+			{
+				leds.push_back( ( (NumberProvider*)provider )->Value() );
+			}
+			StoreObject( new SegmentProvider( new DiscreteSegment( commandStrip, leds ) ), "DiscreteSegment" );
 		}
 		else
 		{

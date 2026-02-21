@@ -1,13 +1,11 @@
 #include <iostream>
 #include "ObjectParsers.hpp"
-#include "ObjectStore.hpp"
 #include "Action.hpp"
 #include "SetAction.hpp"
 #include "ShiftAction.hpp"
 #include "Block.hpp"
 #include "FadeAction.hpp"
 #include "TriggerAction.hpp"
-#include "StringFormatter.hpp"
 
 using namespace std;
 
@@ -51,16 +49,17 @@ namespace Lights
 	/// @return
 	void ObjectParsers::MakeFadeAction()
 	{
-		// Check for fade percentage parameter 
-		if ( storage.FadeAmount == nullptr )
+		// Check for fade percentage parameter of the correct range
+		int32_t percentage = GetStoredNumber( 0, storage.FadeAmount );
+		if ( ( storage.FadeAmount == nullptr ) || ( percentage < 1 ) || ( percentage > 1000 ) )
 		{
-			ReportError( "No fade percentage for FadeAction %", storage.Name );
+			ReportError( "No fade percentage, or invalid value, for FadeAction %", storage.Name );
 		}
 		else
 		{
 			FadeAction* definedAction = new FadeAction();
 			ApplyCommonItemParameters(definedAction);
-			definedAction->Percentage( ( (NumberProvider*)storage.FadeAmount )->GetValue() );
+			definedAction->Percentage( percentage );
 			definedAction->LedProvider( (NumberProvider*)storage.Led );
 			StoreObject(definedAction, "FadeAction");
 		}

@@ -20,7 +20,7 @@ add_executable(${PROJECT}
 		AnimationHelper.cpp
 		Commander.cpp
 		Segment.cpp
-		IntervalSegment.cpp
+		IntervalSegment.hpp
 		ColourProvider.hpp
 		ColourWheelProvider.cpp
 		Tokeniser.cpp
@@ -33,7 +33,7 @@ add_executable(${PROJECT}
 		ColourFadeProvider.cpp
 		MappedSegment.hpp
 		NumberSequenceProvider.hpp
-		DiscreteSegment.cpp
+		DiscreteSegment.hpp
 		ProviderParsers.cpp
 		RandomNumberProvider.hpp
 		RandomNumberSetProvider.cpp

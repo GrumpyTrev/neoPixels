@@ -28,17 +28,11 @@ namespace Lights
 		/// @return
 		inline Colour PixelColour( uint16_t index )
 		{
-			Colour pixelColour = Colour::InvalidColour;
-			if (index < numLeds)
-			{
-				pixelColour = targetStrip->PixelColour(pixelMap[index]);
-			}
-
-			return pixelColour;
+			return ( index < numLeds ) ? targetStrip->PixelColour( pixelMap[ index ] ) : Colour::InvalidColour;
 		}
 
 	protected:
 		// Mapping between the segment pixel number and the underlying strip
-		uint16_t* pixelMap;
+		uint16_t* pixelMap = nullptr;
 	};
 }

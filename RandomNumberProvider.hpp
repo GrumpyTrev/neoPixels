@@ -9,7 +9,7 @@ namespace Lights
 	public:
 		inline RandomNumberProvider( uint16_t min, uint16_t max ) : minimum( min ), maximum( max ), NumberProvider( 0 ) {};
 
-		/// @brief Supply the next colour
+		/// @brief Supply the next number
 		inline virtual void Next()
 		{
 			SetValue( AnimationHelper::Random16( minimum, maximum ) );
