@@ -1,10 +1,8 @@
 #include "Scripting.hpp"
 
-using namespace std;
-
 namespace Lights
 {
-	vector<string> Scripting::builtInScript = {"segment fullSegment", "#t on"};
+	vector<string> Scripting::builtInScript = { "segment fullSegment" };
 	vector<string> Scripting::defaultScript =
 	{
 		"number fadeAmount 10",

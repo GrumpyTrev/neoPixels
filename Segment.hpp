@@ -1,6 +1,5 @@
 #pragma once
 
-#include <string>
 #include "LedStrip.hpp"
 #include "BaseDefinedObject.hpp"
 

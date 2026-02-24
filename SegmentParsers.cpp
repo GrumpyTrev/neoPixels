@@ -1,7 +1,6 @@
 #include "ObjectParsers.hpp"
 #include "IntervalSegment.hpp"
 #include "DiscreteSegment.hpp"
-#include "StringFormatter.hpp"
 
 using namespace std;
 
@@ -59,12 +58,12 @@ namespace Lights
 	void ObjectParsers::MakeDiscreteSegment()
 	{
 		// There should be at least one LED number
-		if ( ( storage.Objects.size() > 0 ) && ( storage.CheckObjectsType<NumberProvider>() == true ) )
+		if ( storage.CheckObjectsType<NumberProvider>() == true )
 		{
 			vector<uint16_t> leds;
 			for ( BaseDefinedObject* provider : storage.Objects )
 			{
-				leds.push_back( ( (NumberProvider*)provider )->Value() );
+				leds.push_back( static_cast<NumberProvider*>( provider )->Value() );
 			}
 			StoreObject( new SegmentProvider( new DiscreteSegment( commandStrip, leds ) ), "DiscreteSegment" );
 		}

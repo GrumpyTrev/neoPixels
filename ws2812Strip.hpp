@@ -13,7 +13,6 @@ namespace Lights
 		// Leds are RGB i.e. 24 bits
 		const uint BitsPerPixel = 24;
 
-		ws2812Strip(PIO pioBlock, uint stateMachine, uint dataPin, uint numLeds);
 		ws2812Strip(uint dataPin, uint numLeds);
 		void Show();
 

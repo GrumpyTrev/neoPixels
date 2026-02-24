@@ -4,18 +4,6 @@
 
 namespace Lights
 {
-	/// @brief Constructor with PIO block and state machine number specified in call.
-	///	Initialise the PIO
-	/// @param pioBlock
-	/// @param stateMachine
-	/// @param dataPin
-	/// @param numLeds
-	ws2812Strip::ws2812Strip(PIO pioBlock, uint stateMachine, uint dataPin, uint numLeds)
-		: LedStrip(numLeds), pioBlock(pioBlock), stateMachine(stateMachine), dataPin(dataPin)
-	{
-		InitialiseStrip();
-	}
-
 	/// @brief Constructor with no PIO block or state machine number specified in call.
 	///	Find an available PIO/state machine pair and initialise the PIO
 	/// @param dataPin

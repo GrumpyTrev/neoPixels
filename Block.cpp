@@ -2,7 +2,6 @@
 #include <pico/time.h>
 
 #include <iostream>
-#include "Trace.hpp"
 
 using namespace std;
 
@@ -12,7 +11,7 @@ namespace Lights
 	/// @param count
 	bool Block::Execute( uint16_t count )
 	{
-		if ( Trace::TraceOn() == true )
+		if ( TraceOn() == true )
 		{
 			cout << TimeDisplay() << "Block " << Name() << " executing. Op count " << operationCount << "\n";
 		}
@@ -30,7 +29,7 @@ namespace Lights
 			// initialise the first sequential item and schedule it for execution
 			if (firstExecution == true)
 			{
-				if (Trace::TraceOn() == true)
+				if ( TraceOn() == true )
 				{
 					cout << TimeDisplay() << "Block " << Name() << " parallel " << parallelItems.size()
 						 << " sequential " << sequenceItems.size() << "\n";
@@ -73,7 +72,7 @@ namespace Lights
 				}
 			}
 
-			if (Trace::TraceOn() == true)
+			if ( TraceOn() == true )
 			{
 				if (stillExecuting == true)
 				{

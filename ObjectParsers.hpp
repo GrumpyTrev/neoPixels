@@ -6,6 +6,8 @@
 #include "ExecutableTypeProvider.hpp"
 #include "ObjectStore.hpp"
 #include "StringFormatter.hpp"
+#include "NumberTrigonometricProvider.hpp"
+#include "TriggerAction.hpp"
 
 using namespace std;
 
@@ -37,31 +39,37 @@ namespace Lights
 		void MakeSegmentSequence();
 		void MakeColourSequenceProvider();
 		void MakeNumberProvider();
-		void MakeColourWheelProvider();
-		void MakeColourFadeProvider();
 		void MakeColourHSVProvider();
 		void MakeRandomNumberProvider();
 		void MakeRandomNumberSetProvider();
 		void MakeNumberIntervalProvider();
 		void MakeNumberSineProvider();
+		void MakeNumberSignedSineProvider();
+		void MakeNumberCosineProvider();
+		void MakeNumberSignedCosineProvider();
 		void MakeSetAction();
 		void MakeShiftAction();
 		void MakeBlock();
 		void MakeFadeAction();
 		void MakeTriggerAction();
+		void MakeExpressionProvider();
 
 		/// @brief Command processing methods
 		void BrightnessCommand();
 		void ExecuteBlockCommand();
-		void TraceCommand();
 
 		/// @brief Apply the extracted parameters to an ExecutableItem
 		/// @param item
-		void ApplyCommonItemParameters( ExecutableItem* item );
+		ExecutableItem* ApplyCommonItemParameters( ExecutableItem* item );
 
 		/// @brief Apply the extracted parameters to a Provider
 		/// @param provider 
 		ProviderBase* ApplyCommonProviderParameters( ProviderBase* provider );
+
+		/// @brief Configure a derived NumberTrigonometricProvider
+		/// @param provider 
+		/// @param typeString 
+		void ConfigureTrigonometricProvider( NumberTrigonometricProvider* provider, string typeString );
 
 		/// @brief Has an error been found during parsing
 		/// @return
@@ -80,7 +88,7 @@ namespace Lights
 		}
 
 		/// @brief Report an error through the 'error' variable
-		inline void ReportError( const char* format ) { error = "ERROR" + (string)format; }
+		inline void ReportError( const char* format ) { error = "ERROR " + (string)format; }
 
 		/// @brief The types of named parameters
 		enum ParameterType
@@ -107,12 +115,32 @@ namespace Lights
 		inline ParameterParseData MakeParseData(ParameterType type, BaseDefinedObject *&storageLocation)
 		{
 			return {type, storageLocation};
+		}
+
+		/// @brief Define a DefinitionParser as a pointer to a function that returns
+		/// any errors. The resultant object is stored in the ObjectParsers
+		typedef void ( ObjectParsers::* DefinitionParser )( );
+
+		/// @brief The structure to hold object parsing data
+		struct ObjectParseData
+		{
+			DefinitionParser Parser;
+			bool IsCommand;
 		};
+
+		/// @brief Create a ObjectParseData instance to be stored in the parse map
+		/// @param type
+		/// @param storageLocation
+		/// @return
+		inline ObjectParseData MakeObjectParseData( DefinitionParser parser, bool isCommand = false )
+		{
+			return { parser, isCommand };
+		}
 
 		/// @brief Extract all the known named parameters, colours, uints and stored object references
 		/// from the Tokeniser
 		/// @return
-		bool ExtractParameters();
+		bool ExtractParameters( bool isCommand );
 
 		/// @brief Extract a specific parameter type from the string value suppl;ied
 		/// @param value
@@ -128,18 +156,18 @@ namespace Lights
 		/// @param defaultValue
 		/// @param provider
 		/// @return
-		bool GetStoredBoolean(bool defaultValue, BaseDefinedObject *provider)
+		bool GetStoredBoolean( bool defaultValue, BooleanProvider* provider )
 		{
-			return (provider == nullptr) ? defaultValue : ((BooleanProvider *)(provider))->Value();
+			return ( provider == nullptr ) ? defaultValue : provider->Value();
 		}
 
 		/// @brief Get an int value from the provider, if it exists
 		/// @param defaultValue
 		/// @param provider
 		/// @return
-		int32_t GetStoredNumber( int32_t defaultValue, BaseDefinedObject* provider )
+		int32_t GetStoredNumber( int32_t defaultValue, NumberProvider* provider )
 		{
-			return (provider == nullptr) ? defaultValue : ((NumberProvider *)(provider))->Value();
+			return ( provider == nullptr ) ? defaultValue : provider->Value();
 		}
 
 		/// @brief Get an int value from the object vector at the specified index
@@ -154,9 +182,10 @@ namespace Lights
 		/// @param defaultValue
 		/// @param provider
 		/// @return
-		ExecutableItem::SynchType GetStoredSynchType(ExecutableItem::SynchType defaultValue, BaseDefinedObject *provider)
+		ExecutableItem::SynchType GetStoredSynchType( ExecutableItem::SynchType defaultValue,
+			ExecutableTypeProvider* provider )
 		{
-			return (provider == nullptr) ? defaultValue : ((ExecutableTypeProvider *)(provider))->Value();
+			return ( provider == nullptr ) ? defaultValue : provider->Value();
 		}
 
 		/// @brief Struct holding all the parameters, objects and numbers extracted from the Tokeniser
@@ -172,8 +201,6 @@ namespace Lights
 				Led = nullptr;
 				ReverseFlag = nullptr;
 				Interval = nullptr;
-				StartColour = nullptr;
-				EndColour = nullptr;
 				Min = nullptr;
 				Max = nullptr;
 				ExecutionType = nullptr;
@@ -188,6 +215,7 @@ namespace Lights
 				When = nullptr;
 				WhenNot = nullptr;
 				Init = nullptr;
+				Trace = nullptr;
 				Objects.clear();
 				Name = "";
 			}
@@ -202,40 +230,45 @@ namespace Lights
 			template <class T>
 			inline bool CheckObjectsType()
 			{
-				for (BaseDefinedObject *object : Objects)
+				if ( Objects.size() > 0 )
 				{
-					if (dynamic_cast<T *>(object) == nullptr)
+					for ( BaseDefinedObject* object : Objects )
 					{
-						return false;
+						if ( dynamic_cast<T*>( object ) == nullptr )
+						{
+							return false;
+						}
 					}
+
+					return true;
 				}
-				return true;
+
+				return false;
 			}
 
 			/// @brief The providers holding the named parameters
-			BaseDefinedObject* Delay;
-			BaseDefinedObject* Count;
-			BaseDefinedObject* Time;
-			BaseDefinedObject* Segment;
-			BaseDefinedObject* Led;
-			BaseDefinedObject* ReverseFlag;
-			BaseDefinedObject* Interval;
-			BaseDefinedObject* StartColour;
-			BaseDefinedObject* EndColour;
-			BaseDefinedObject* Min;
-			BaseDefinedObject* Max;
-			BaseDefinedObject* ExecutionType;
-			BaseDefinedObject* Colour;
-			BaseDefinedObject* Hue;
-			BaseDefinedObject* Sat;
-			BaseDefinedObject* Value;
-			BaseDefinedObject* NextTrigger;
-			BaseDefinedObject* ResetTrigger;
-			BaseDefinedObject* FillFlag;
-			BaseDefinedObject* FadeAmount;
-			BaseDefinedObject* When;
-			BaseDefinedObject* WhenNot;
-			BaseDefinedObject* Init;
+			NumberProvider* Delay;
+			NumberProvider* Count;
+			NumberProvider* Time;
+			SegmentProvider* Segment;
+			NumberProvider* Led;
+			BooleanProvider* ReverseFlag;
+			NumberProvider* Interval;
+			NumberProvider* Min;
+			NumberProvider* Max;
+			ExecutableTypeProvider* ExecutionType;
+			ColourProvider* Colour;
+			NumberProvider* Hue;
+			NumberProvider* Sat;
+			NumberProvider* Value;
+			TriggerAction* NextTrigger;
+			TriggerAction* ResetTrigger;
+			BooleanProvider* FillFlag;
+			NumberProvider* FadeAmount;
+			NumberProvider* When;
+			NumberProvider* WhenNot;
+			NumberProvider* Init;
+			BooleanProvider* Trace;
 
 			/// @brief The name of the object
 			string Name;
@@ -244,15 +277,8 @@ namespace Lights
 			vector<BaseDefinedObject*> Objects;
 		};
 
-		/// @brief Define a DefinitionParser as a pointer to a function that returns
-		/// any errors. The resultant object is stored in the ObjectParsers
-		typedef void (ObjectParsers::*DefinitionParser)();
-
-		/// @brief Mapping from object type name to maker function
-		map<string, DefinitionParser> parserMap;
-
-		/// @brief Mapping from command name to processing method
-		map<string, DefinitionParser> commandMap;
+		/// @brief Mapping from object type name to maker function and command flag
+		map<string, ObjectParseData> parserMap;
 
 		/// @brief The physical strip used to validate pixel numbers in definitions
 		LedStrip *commandStrip;

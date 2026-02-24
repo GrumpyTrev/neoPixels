@@ -1,6 +1,5 @@
 #pragma once
 #include "Action.hpp"
-#include "NumberProvider.hpp"
 
 namespace Lights
 {

@@ -16,7 +16,7 @@ namespace Lights
 
 	/// @brief Copy constructor
 	/// @param rhs
-	ExecutableItem::ExecutableItem(const ExecutableItem &rhs)
+	ExecutableItem::ExecutableItem( const ExecutableItem& rhs ) : BaseDefinedObject( rhs )
 	{
 		postDelayer = rhs.postDelayer;
 		executionTimer = rhs.executionTimer;

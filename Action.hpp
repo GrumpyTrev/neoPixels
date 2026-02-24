@@ -1,12 +1,11 @@
 #pragma once
 #include "ColourProvider.hpp"
-#include "BaseDefinedObject.hpp"
 #include "ExecutableItem.hpp"
 
 namespace Lights
 {
 	/// @brief Abstract class for Actions that can be performed on an LedSequence
-	class Action : public BaseDefinedObject, public ExecutableItem
+	class Action : public ExecutableItem
 	{
 	public:
 		/// @brief Explicit default constructor

@@ -10,7 +10,7 @@ namespace Lights
 	class DiscreteSegment : public MappedSegment
 	{
 	public:
-		inline DiscreteSegment( LedStrip* target, vector<uint16_t> pixels ) : MappedSegment( target )
+		inline DiscreteSegment( LedStrip* target, vector<uint16_t> const& pixels ) : MappedSegment( target )
 		{
 			numLeds = pixels.size();
 

@@ -1,12 +1,11 @@
 #pragma once
-#include "BaseDefinedObject.hpp"
 #include "ExecutableItem.hpp"
 #include <vector>
 
 namespace Lights
 {
 	/// @brief Container class for Actions and Blocks that can be performed on an LedSequence
-	class Block : public BaseDefinedObject, public ExecutableItem
+	class Block : public ExecutableItem
 	{
 	public:
 		/// @brief Explicit default constructor
@@ -14,7 +13,7 @@ namespace Lights
 
 		/// @brief Copy constructor
 		/// @param rhs
-		inline Block(const Block &rhs) : ExecutableItem(rhs), BaseDefinedObject(rhs)
+		inline Block( const Block& rhs ) : ExecutableItem( rhs )
 		{
 			sequenceItems.reserve(rhs.sequenceItems.size());
 			for (auto *elem : rhs.sequenceItems)

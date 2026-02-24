@@ -7,7 +7,7 @@
 
 namespace Lights
 {
-	class ExecutableItem
+	class ExecutableItem : public BaseDefinedObject
 	{
 	public:
 		/// @brief Explicit default constructor

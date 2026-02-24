@@ -4,6 +4,8 @@
 
 namespace Lights
 {
+    /// @brief A non-templated base class for all callbacks. Required so that all instances can be held in
+    ///        a single collectiomn
     class CallbackBase
     {
     public:
@@ -15,10 +17,15 @@ namespace Lights
     {
     public:
 
+        /// @brief Define TriggerEvent as a pointer to a method in class T that takes no parameters
         typedef void ( T::* TriggerEvent )( );
 
+        /// @brief Create a Callback 
+        /// @param trg Instance of the class containing the callback method
+        /// @param op The method to cal
         Callback( T* trg, TriggerEvent op ) : target( trg ), operation( op ) {}
 
+        /// @brief Execute the method on the save class instance
         void Execute()
         {
             ( target->*operation )( );
@@ -26,10 +33,14 @@ namespace Lights
 
     private:
 
+        /// @brief Instance of the class to be called
         T* target;
+
+        /// @brief Pointer to the method to be called
         TriggerEvent operation;
     };
 
+    /// @brief The TriggerAction holds one or more callback methods that are called when the action is executed
     class TriggerAction : public Action
     {
     public:
@@ -41,7 +52,7 @@ namespace Lights
         /// @param rhs
         inline TriggerAction( const TriggerAction& rhs ) : Action( rhs )
         {
-            providers = rhs.providers;
+            callbacks = rhs.callbacks;
         };
 
         /// @brief Clone the item.
@@ -50,21 +61,22 @@ namespace Lights
 
         /// @brief Add an action to the trigger
         /// @param item 
-        inline void AddCallback( CallbackBase* callBack ) { providers.push_back( callBack ); }
+        inline void AddCallback( CallbackBase* callBack ) { callbacks.push_back( callBack ); }
 
     protected:
 
-        /// @brief Trigger all of the actions
+        /// @brief Trigger all of the callbacks
         inline void Execute()
         {
-            for ( auto& provider : providers )
+            for ( CallbackBase* callback : callbacks )
             {
-                provider->Execute();
+                callback->Execute();
             }
         };
 
     private:
 
-        std::vector<CallbackBase*> providers;
+        /// @brief The callback methods to call when this action is executed
+        vector<CallbackBase*> callbacks;
     };
 }

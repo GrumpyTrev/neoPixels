@@ -50,7 +50,7 @@ int main()
 	irq_set_enabled(IO_IRQ_BANK0, true);
 
 	// Initialise the strip of LEDs
-	Lights::ws2812Strip leds(WS2812_PIN, NUM_PIXELS);
+	ws2812Strip leds( WS2812_PIN, NUM_PIXELS );
 	leds.SetBrightness(10);
 	leds.ApplyGamma(true);
 

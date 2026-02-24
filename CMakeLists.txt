@@ -17,12 +17,10 @@ add_executable(${PROJECT}
 		Colour.cpp 
 		LedStrip.cpp 
 		ws2812Strip.cpp 
-		AnimationHelper.cpp
 		Commander.cpp
 		Segment.cpp
 		IntervalSegment.hpp
 		ColourProvider.hpp
-		ColourWheelProvider.cpp
 		Tokeniser.cpp
 		BaseDefinedObject.hpp
 		ObjectParsers.cpp
@@ -30,7 +28,6 @@ add_executable(${PROJECT}
 		ColourSequenceProvider.hpp
 		ProviderBase.hpp
 		NumberProvider.hpp
-		ColourFadeProvider.cpp
 		MappedSegment.hpp
 		NumberSequenceProvider.hpp
 		DiscreteSegment.hpp
@@ -48,14 +45,15 @@ add_executable(${PROJECT}
 		ExecutableTypeProvider.hpp
 		SegmentParsers.cpp
 		Scripting.cpp
-		Trace.cpp
 		SegmentSequenceProvider.hpp
 		NumberIntervalProvider.hpp
 		ColourHSVProvider.hpp
-		NumberSineProvider.hpp
+		NumberTrigonometricProvider.hpp
 		FadeAction.hpp
 		TriggerAction.hpp
 		StringFormatter.hpp
+		ExpressionOperator.hpp
+		ExpressionProvider.cpp
 		)
 
 target_link_libraries(${PROJECT}

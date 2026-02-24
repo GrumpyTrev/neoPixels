@@ -1,6 +1,5 @@
 #pragma once
 #include "NumberProvider.hpp"
-#include "AnimationHelper.hpp"
 
 namespace Lights
 {
@@ -10,10 +9,17 @@ namespace Lights
 		inline RandomNumberProvider( uint16_t min, uint16_t max ) : minimum( min ), maximum( max ), NumberProvider( 0 ) {};
 
 		/// @brief Supply the next number
-		inline virtual void Next()
+		inline virtual void Next() { SetValue( Random16( minimum, maximum ) ); }
+
+		static inline uint16_t Random16()
 		{
-			SetValue( AnimationHelper::Random16( minimum, maximum ) );
+			randomSeed16 = ( randomSeed16 * 2053 ) + 13849;
+			return randomSeed16;
 		}
+
+		static inline uint16_t Random16( uint16_t lim ) { return ( Random16() * lim ) >> 16; }
+
+		static inline uint16_t Random16( uint16_t min, uint16_t lim ) { return Random16( lim - min ) + min; }
 
 	protected:
 		/// @brief Minimum number
@@ -21,5 +27,9 @@ namespace Lights
 
 		/// @brief Maximum number
 		uint16_t maximum;
+
+	private:
+		// 16 bit random number seed
+		inline static uint16_t randomSeed16 = 0;
 	};
 }

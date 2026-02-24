@@ -31,16 +31,6 @@ namespace Lights
 		/// @return
 		inline uint TokensLeft() { return tokens.size() - tokenIndex; }
 
-		/// @brief Get the next integer from the command line.
-		/// Set the error flag if there are no more tokens or if the token is not a valid integer
-		/// @param value Reference to int that value should be returned in
-		/// @return Returns true if a valid integer was returned in the reference parameter
-		bool NextInt( int32_t& value );
-
-		/// @brief The current token being processed
-		/// @return
-		inline string Current() { return tokenIndex > 0 ? tokens[tokenIndex - 1] : ""; }
-
 		/// @brief Flag set to true if an error has been found during the processing of the command line
 		inline bool Error() { return error; };
 

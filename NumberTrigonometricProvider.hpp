@@ -3,24 +3,20 @@
 
 namespace Lights
 {
-	class NumberSineProvider : public NumberProvider
-	{
-	public:
-        inline NumberSineProvider( uint8_t waveLength, NumberProvider* start ) : startProvider( start ),
-            NumberProvider( 0 )
-        {
-            // The interval is 256 / waveLength
-            interval = 256 / waveLength;
+    /// @brief A provider to supply a sequence of sine or cosine numbers. 
+    ///        The wavelength and an optional start provider can be specified.
+    ///        This is an abstract class, the actual values are supplied by the derived classes accessing different 
+    ///        lookup tables, or with different offsets.
+    class NumberTrigonometricProvider : public NumberProvider
+    {
+    public:
+        inline NumberTrigonometricProvider() : NumberProvider( 0 ) {};
 
-            Reset();
-        };
-
-		/// @brief Supply the next number
         inline void Next()
         {
             // Get the next value. Note that this will wrap around at 256
             index += interval;
-            SetValue( SineTable[index]);
+            SetValue( AccessLookupTable( index ) );
         }
 
         /// @brief Reset the provider
@@ -28,10 +24,26 @@ namespace Lights
         {
             // Initialise the index. This will just take the lowest 8 bits of any startProvider value
             index = ( startProvider == nullptr ) ? 0 : startProvider->Value();
-            SetValue( SineTable[ index ] );
+            SetValue( AccessLookupTable( index ) );
         }
 
-    private:
+        /// @brief Configure the provider
+        /// @param waveLength 
+        /// @param start 
+        inline void Configure( uint8_t waveLength, NumberProvider* start )
+        {
+            startProvider = start;
+
+            // The interval is 256 / waveLength
+            interval = 256 / waveLength;
+
+            Reset();
+        }
+
+    protected:
+
+        virtual int32_t AccessLookupTable( uint8_t index ) = 0;
+
         /// @brief The interval between supplied sine values
         uint8_t interval;
 
@@ -48,7 +60,7 @@ namespace Lights
             print("{:3},".format(int((math.sin(x/128.0*math.pi)+1.0)*127.5+0.5))),
             if x&15 == 15: print
         */
-        const uint8_t SineTable[256] = {
+        const uint8_t SineTable[ 256 ] = {
             128, 131, 134, 137, 140, 143, 146, 149, 152, 155, 158, 162, 165, 167, 170,
             173, 176, 179, 182, 185, 188, 190, 193, 196, 198, 201, 203, 206, 208, 211,
             213, 215, 218, 220, 222, 224, 226, 228, 230, 232, 234, 235, 237, 238, 240,
@@ -86,5 +98,41 @@ namespace Lights
            -89, -87, -85, -82, -80, -78, -75, -73, -70, -67, -65, -62, -59, -57, -54, -51,
            -48, -45, -42, -39, -36, -33, -30, -27, -24, -21, -18, -15, -12, -9,  -6,  -3
         };
+    };
+
+    /// @brief A provider to supply a sequence of uint8_t sine numbers. 
+    class NumberSineProvider : public NumberTrigonometricProvider
+    {
+    public:
+
+    protected:
+        virtual int32_t AccessLookupTable( uint8_t index ) override { return SineTable[ index ]; }
+    };
+
+    /// @brief A provider to supply a sequence of int8_t sine numbers. 
+    class NumberSignedSineProvider : public NumberTrigonometricProvider
+    {
+    public:
+
+    protected:
+        virtual int32_t AccessLookupTable( uint8_t index ) override { return SignedSineTable[ index ]; }
+    };
+
+    /// @brief A provider to supply a sequence of uint8_t cosine numbers. 
+    class NumberCosineProvider : public NumberTrigonometricProvider
+    {
+    public:
+
+    protected:
+        virtual int32_t AccessLookupTable( uint8_t index ) override { return SineTable[ uint8_t( index + 64 ) ]; }
+    };
+
+    /// @brief A provider to supply a sequence of int8_t cosine numbers. 
+    class NumberSignedCosineProvider : public NumberTrigonometricProvider
+    {
+    public:
+
+    protected:
+        virtual int32_t AccessLookupTable( uint8_t index ) override { return SignedSineTable[ uint8_t( index + 64 ) ]; }
     };
 }

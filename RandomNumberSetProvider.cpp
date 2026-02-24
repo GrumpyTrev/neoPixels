@@ -18,7 +18,7 @@ namespace Lights
 		}
 
 		// Select one of the set at random. This will be in the range 0 to numberset.size() - 1
-		uint16_t numberIndex = AnimationHelper::Random16( numberset.size() );
+		uint16_t numberIndex = RandomNumberProvider::Random16( numberset.size() );
 		SetValue(numberset.at(numberIndex));
 
 		// Remove from the set of numbers

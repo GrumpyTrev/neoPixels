@@ -1,19 +1,16 @@
-#include <iostream>
 #include "ObjectParsers.hpp"
 #include "ObjectStore.hpp"
 #include "ColourSequenceProvider.hpp"
 #include "NumberProvider.hpp"
-#include "ColourWheelProvider.hpp"
-#include "ColourFadeProvider.hpp"
 #include "NumberSequenceProvider.hpp"
 #include "RandomNumberProvider.hpp"
 #include "RandomNumberSetProvider.hpp"
 #include "SegmentSequenceProvider.hpp"
 #include "NumberIntervalProvider.hpp"
 #include "ColourHSVProvider.hpp"
-#include "NumberSineProvider.hpp"
-#include "TriggerAction.hpp"
-#include "StringFormatter.hpp"
+#include "NumberTrigonometricProvider.hpp"
+#include "ExpressionOperator.hpp"
+#include "ExpressionProvider.hpp"
 
 using namespace std;
 
@@ -24,12 +21,12 @@ namespace Lights
 	void ObjectParsers::MakeColourSequenceProvider()
 	{
 		// Make sure that all the stored objects are ColourProviders, and there is at least one of them
-		if ((storage.CheckObjectsType<ColourProvider>() == true) && (storage.Objects.size() > 0))
+		if ( storage.CheckObjectsType<ColourProvider>() == true )
 		{
-			ColourSequenceProvider *definedProvider = new ColourSequenceProvider();
-			for (BaseDefinedObject *object : storage.Objects)
+			ColourSequenceProvider* definedProvider = new ColourSequenceProvider();
+			for ( BaseDefinedObject* object : storage.Objects )
 			{
-				definedProvider->AddValue(((ColourProvider *)(object))->Value());
+				definedProvider->AddValue( static_cast<ColourProvider*>( object )->Value() );
 			}
 
 			StoreObject( ApplyCommonProviderParameters( definedProvider ), "ColourSequenceProvider" );
@@ -40,52 +37,26 @@ namespace Lights
 		}
 	}
 
-	/// @brief Create a ColourWheelProvider with a specified name
-	/// @return
-	void ObjectParsers::MakeColourWheelProvider()
-	{
-		// Just the provider name is required. This has already been checked
-		StoreObject( ApplyCommonProviderParameters( new ColourWheelProvider() ), "ColourWheelProvider" );
-	}
-
-	/// @brief Create a ColourFadeProvider based upon two colour references and a step count
-	/// @param tokens
-	/// @return
-	void ObjectParsers::MakeColourFadeProvider()
-	{
-		// There should be two colour references and a step count.
-		if ( ( storage.StartColour == nullptr ) || ( storage.EndColour == nullptr ) ||
-			( storage.Interval == nullptr ) )
-		{
-			ReportError( "Parameter missing for ColourFadeProvider %", storage.Name );
-		}
-		else
-		{
-			StoreObject( ApplyCommonProviderParameters(
-				new ColourFadeProvider( (ColourProvider*)( storage.StartColour ), (ColourProvider*)( storage.EndColour ),
-					GetStoredNumber( 0, storage.Interval ) ) ), "ColourFadeProvider" );
-		}
-	};
-
 	/// @brief Make a NumberProvider with the specified name and value(s)
 	void ObjectParsers::MakeNumberProvider()
 	{
 		// This is going to be a NumberProvider or a NumberSequenceProvider depending on the
 		// number of numbers provided
-		if ( ( storage.Objects.size() > 0 ) && ( storage.CheckObjectsType<NumberProvider>() == true ) )
+		if ( storage.CheckObjectsType<NumberProvider>() == true )
 		{
 			if ( storage.Objects.size() == 1 )
 			{
-				NumberProvider* provider = new NumberProvider( GetStoredNumber( 0 ) );
-				StoreObject( ApplyCommonProviderParameters( provider ), "NumberProvider" );
+				StoreObject( ApplyCommonProviderParameters( new NumberProvider( GetStoredNumber( 0 ) ) ),
+					"NumberProvider" );
 			}
 			else
 			{
 				NumberSequenceProvider* provider = new NumberSequenceProvider();
-				for ( uint32_t index = 0; index < storage.Objects.size(); index++ )
+				for ( BaseDefinedObject* object : storage.Objects )
 				{
-					provider->AddValue( GetStoredNumber( index ) );
+					provider->AddValue( static_cast<NumberProvider*>( object )->Value() );
 				}
+
 				StoreObject( ApplyCommonProviderParameters( provider ), "NumberSequenceProvider" );
 			}
 		}
@@ -132,17 +103,15 @@ namespace Lights
 			ReportError( "Invalid min or max values for RandomNumberSetProvider %", storage.Name );
 		}
 	}
-	
+
 	/// @brief Create and store a NumberIntervalProvider instance
 	/// @param tokens
 	/// @return
 	void ObjectParsers::MakeNumberIntervalProvider()
 	{
 		// If the minimum or maximum are not specified then make number providers for them
-		NumberProvider* minProvider = ( storage.Min != nullptr ) ?
-			(NumberProvider*)storage.Min : new NumberProvider( 0 );
-		NumberProvider* maxProvider = ( storage.Max != nullptr ) ?
-			(NumberProvider*)storage.Max : new NumberProvider( 65535 );
+		NumberProvider* minProvider = ( storage.Min != nullptr ) ? storage.Min : new NumberProvider( 0 );
+		NumberProvider* maxProvider = ( storage.Max != nullptr ) ? storage.Max : new NumberProvider( 65535 );
 
 		StoreObject( ApplyCommonProviderParameters(
 			new NumberIntervalProvider( minProvider, maxProvider, GetStoredNumber( 1, storage.Interval ),
@@ -161,8 +130,8 @@ namespace Lights
 		else
 		{
 			StoreObject( ApplyCommonProviderParameters(
-				new ColourHSVProvider( (NumberProvider*)storage.Hue, (NumberProvider*)storage.Sat,
-					(NumberProvider*)storage.Value, GetStoredNumber( 0, storage.Interval ) ) ), "ColourHSVProvider" );
+				new ColourHSVProvider( storage.Hue, storage.Sat, storage.Value,
+					GetStoredNumber( 0, storage.Interval ) ) ), "ColourHSVProvider" );
 		}
 	}
 
@@ -171,16 +140,49 @@ namespace Lights
 	/// @return
 	void ObjectParsers::MakeNumberSineProvider()
 	{
+		ConfigureTrigonometricProvider( new NumberSineProvider(), "NumberSineProvider" );
+	}
+
+	/// @brief Create and store a NumberSignedSineProvider instance
+	/// @param tokens
+	/// @return
+	void ObjectParsers::MakeNumberSignedSineProvider()
+	{
+		ConfigureTrigonometricProvider( new NumberSignedSineProvider(), "NumberSignedSineProvider" );
+	}
+
+	/// @brief Create and store a NumberCosineProvider instance
+	/// @param tokens
+	/// @return
+	void ObjectParsers::MakeNumberCosineProvider()
+	{
+		ConfigureTrigonometricProvider( new NumberCosineProvider(), "NumberCosineProvider" );
+	}
+
+	/// @brief Create and store a NumberSignedCosineProvider instance
+	/// @param tokens
+	/// @return
+	void ObjectParsers::MakeNumberSignedCosineProvider()
+	{
+		ConfigureTrigonometricProvider( new NumberSignedCosineProvider(), "NumberSignedCosineProvider" );
+	}
+
+	/// @brief Configure and store a derived NumberTrigonometricProvider instance
+	/// @param tokens
+	/// @return
+	void ObjectParsers::ConfigureTrigonometricProvider( NumberTrigonometricProvider* provider, string typeString )
+	{
 		// Get the optional waveLength ( stored in Interval ), and check it is in range
 		int32_t waveLength = GetStoredNumber( 256, storage.Interval );
 		if ( ( waveLength > 0 ) && ( waveLength <= 256 ) )
 		{
-			StoreObject( ApplyCommonProviderParameters(
-				new NumberSineProvider( waveLength, (NumberProvider*)storage.Init ) ), "NumberSineProvider" );
+			ApplyCommonProviderParameters( provider );
+			provider->Configure( waveLength, storage.Init );
+			StoreObject( provider, typeString );
 		}
 		else
 		{
-			ReportError( "Invalid wavelength value for MakeNumberSineProvider %", storage.Name );
+			ReportError( "Invalid wavelength value for % %", typeString, storage.Name );
 		}
 	}
 
@@ -190,13 +192,13 @@ namespace Lights
 	void ObjectParsers::MakeSegmentSequence()
 	{
 		// There should be at least one segment provider and they should all be SegmentProviders
-		if ( ( storage.Objects.size() > 0 ) && ( storage.CheckObjectsType<SegmentProvider>() == true ) )
+		if ( storage.CheckObjectsType<SegmentProvider>() == true )
 		{
-			SegmentSequenceProvider *definedObject = new SegmentSequenceProvider();
+			SegmentSequenceProvider* definedObject = new SegmentSequenceProvider();
 
-			for (BaseDefinedObject *object : storage.Objects)
+			for ( BaseDefinedObject* object : storage.Objects )
 			{
-				definedObject->AddValue(((SegmentProvider *)(object))->Value());
+				definedObject->AddValue( static_cast<SegmentProvider*>( object )->Value() );
 			}
 
 			StoreObject( ApplyCommonProviderParameters( definedObject ), "SegmentSequenceProvider" );
@@ -207,6 +209,40 @@ namespace Lights
 		}
 	}
 
+	/// @brief Make an ExpressionProvider from the ParameterStorage
+	void ObjectParsers::MakeExpressionProvider()
+	{
+		// There should be at least one object, and all objects should be either NumberProviders or 
+		// ExpressionOperators
+		if ( storage.Objects.size() > 0 )
+		{
+			bool validObjects = true;
+			uint objectIndex = 0;
+			while ( ( validObjects == true ) && ( objectIndex < storage.Objects.size() ) )
+			{
+				BaseDefinedObject* object = storage.Objects[ objectIndex++ ];
+				if ( ( dynamic_cast<NumberProvider*>( object ) == nullptr ) &&
+					( dynamic_cast<ExpressionOperator*>( object ) == nullptr ) )
+				{
+					ReportError( "% is not a NumberProvider or ExpressionOperator for ExpressionProvider %",
+						object->Name(), storage.Name );
+
+					validObjects = false;
+				}
+			}
+
+			if ( validObjects == true )
+			{
+				StoreObject( ApplyCommonProviderParameters( new ExpressionProvider( storage.Objects ) ),
+					"ExpressionProvider" );
+			}
+			else
+			{
+				ReportError( "No NumberProviders or ExpressionOperators for ExpressionProvider %", storage.Name );
+			}
+		}
+	}
+
 	/// @brief Apply the extracted parameters to a Provider
 	/// @param error
 	/// @return
@@ -214,8 +250,7 @@ namespace Lights
 	{
 		if ( storage.NextTrigger != nullptr )
 		{
-			( (TriggerAction*)storage.NextTrigger )->AddCallback(
-				new Callback<ProviderBase>( provider, &ProviderBase::Next ) );
+			storage.NextTrigger->AddCallback( new Callback<ProviderBase>( provider, &ProviderBase::Next ) );
 
 			// If there is a Next trigger then clear SelfIncrement
 			provider->SelfIncrement( false );
@@ -223,8 +258,7 @@ namespace Lights
 
 		if ( storage.ResetTrigger != nullptr )
 		{
-			( (TriggerAction*)storage.ResetTrigger )->AddCallback(
-				new Callback<ProviderBase>( provider, &ProviderBase::Reset ) );
+			storage.ResetTrigger->AddCallback( new Callback<ProviderBase>( provider, &ProviderBase::Reset ) );
 		}
 
 		return provider;

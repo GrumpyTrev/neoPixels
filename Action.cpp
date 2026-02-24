@@ -1,14 +1,13 @@
 #include "Action.hpp"
 #include <pico/time.h>
 
-#include "Trace.hpp"
 #include <iostream>
 
 namespace Lights
 {
 	/// @brief Copy constructor
 	/// @param rhs
-	Action::Action(const Action &rhs) : ExecutableItem(rhs), BaseDefinedObject(rhs)
+	Action::Action( const Action& rhs ) : ExecutableItem( rhs )
 	{
 		actionColourProvider = rhs.actionColourProvider;
 	}
@@ -74,7 +73,7 @@ namespace Lights
 			delayTime = make_timeout_time_ms(postDelayValue);
 		}
 
-		if (Trace::TraceOn() == true)
+		if ( TraceOn() == true )
 		{
 			cout << TimeDisplay() << "Action " << Name() << " Op count " << operationCount << " post delay " << postDelayValue << "\n";
 		}

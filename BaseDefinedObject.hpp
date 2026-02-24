@@ -15,15 +15,20 @@ namespace Lights
 
 		/// @brief Copy constructor
 		/// @param rhs
-		inline BaseDefinedObject(const BaseDefinedObject &rhs) { name = rhs.name; }
+		inline BaseDefinedObject( const BaseDefinedObject& rhs ) { name = rhs.name; traceOn = rhs.traceOn; }
 
 		inline virtual ~BaseDefinedObject() {};
 
 		inline string Name() { return name; }
-		inline void Name(string objectName) { name = objectName; }
+		inline void Name( string objectName ) { name = objectName; }
+		inline bool TraceOn() { return traceOn; }
+		inline void TraceOn( bool trace ) { traceOn = trace; }
 
 	private:
 		/// @brief Name given to this object
 		string name;
+
+		/// @brief Is tracing on for this object
+		bool traceOn = false;
 	};
 }

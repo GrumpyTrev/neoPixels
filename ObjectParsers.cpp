@@ -1,12 +1,7 @@
 #include <iostream>
 #include "ObjectParsers.hpp"
-#include "ObjectStore.hpp"
-#include "ColourProvider.hpp"
-#include "Trace.hpp"
-#include "Block.hpp"
 #include "Commander.hpp"
-#include "TriggerAction.hpp"
-#include "StringFormatter.hpp"
+#include "ExpressionOperator.hpp"
 
 using namespace std;
 
@@ -19,58 +14,63 @@ namespace Lights
 		: tokens(tokeniserToUse), commandStrip(stripToUse), commander(commanderToUse)
 	{
 		// Initialise the object name to Maker method map
-		parserMap.emplace("colour", &ObjectParsers::MakeColour);
-		parserMap.emplace("segment", &ObjectParsers::MakeSegment);
-		parserMap.emplace("discreteSegment", &ObjectParsers::MakeDiscreteSegment);
-		parserMap.emplace("intervalSegment", &ObjectParsers::MakeIntervalSegment);
-		parserMap.emplace("segmentSequence", &ObjectParsers::MakeSegmentSequence);
-		parserMap.emplace("colourSequence", &ObjectParsers::MakeColourSequenceProvider);
-		parserMap.emplace("number", &ObjectParsers::MakeNumberProvider);
-		parserMap.emplace("numberSequence", &ObjectParsers::MakeNumberProvider);
-		parserMap.emplace("colourWheel", &ObjectParsers::MakeColourWheelProvider);
-		parserMap.emplace("colourFader", &ObjectParsers::MakeColourFadeProvider);
-		parserMap.emplace("colourHSV", &ObjectParsers::MakeColourHSVProvider);
-		parserMap.emplace("randomNumber", &ObjectParsers::MakeRandomNumberProvider);
-		parserMap.emplace("randomNumberSet", &ObjectParsers::MakeRandomNumberSetProvider);
-		parserMap.emplace( "counter", &ObjectParsers::MakeNumberIntervalProvider );
-		parserMap.emplace( "sine", &ObjectParsers::MakeNumberSineProvider );
-		parserMap.emplace( "set", &ObjectParsers::MakeSetAction );
-		parserMap.emplace("shift", &ObjectParsers::MakeShiftAction);
-		parserMap.emplace( "fade", &ObjectParsers::MakeFadeAction );
-		parserMap.emplace( "trigger", &ObjectParsers::MakeTriggerAction );
-		parserMap.emplace("block", &ObjectParsers::MakeBlock);
-
-		// Initialise the command name to processing method map
-		commandMap.emplace("b", &ObjectParsers::BrightnessCommand);
-		commandMap.emplace("x", &ObjectParsers::ExecuteBlockCommand);
-		commandMap.emplace("t", &ObjectParsers::TraceCommand);
+		parserMap.emplace( "b", MakeObjectParseData( &ObjectParsers::BrightnessCommand, true ) );
+		parserMap.emplace( "x", MakeObjectParseData( &ObjectParsers::ExecuteBlockCommand, true ) );
+		parserMap.emplace( "colour", MakeObjectParseData( &ObjectParsers::MakeColour ) );
+		parserMap.emplace( "segment", MakeObjectParseData( &ObjectParsers::MakeSegment ) );
+		parserMap.emplace( "discreteSegment", MakeObjectParseData( &ObjectParsers::MakeDiscreteSegment ) );
+		parserMap.emplace( "intervalSegment", MakeObjectParseData( &ObjectParsers::MakeIntervalSegment ) );
+		parserMap.emplace( "segmentSequence", MakeObjectParseData( &ObjectParsers::MakeSegmentSequence ) );
+		parserMap.emplace( "colourSequence", MakeObjectParseData( &ObjectParsers::MakeColourSequenceProvider ) );
+		parserMap.emplace( "number", MakeObjectParseData( &ObjectParsers::MakeNumberProvider ) );
+		parserMap.emplace( "numberSequence", MakeObjectParseData( &ObjectParsers::MakeNumberProvider ) );
+		parserMap.emplace( "colourHSV", MakeObjectParseData( &ObjectParsers::MakeColourHSVProvider ) );
+		parserMap.emplace( "randomNumber", MakeObjectParseData( &ObjectParsers::MakeRandomNumberProvider ) );
+		parserMap.emplace( "randomNumberSet", MakeObjectParseData( &ObjectParsers::MakeRandomNumberSetProvider ) );
+		parserMap.emplace( "counter", MakeObjectParseData( &ObjectParsers::MakeNumberIntervalProvider ) );
+		parserMap.emplace( "sine", MakeObjectParseData( &ObjectParsers::MakeNumberSineProvider ) );
+		parserMap.emplace( "signedSine", MakeObjectParseData( &ObjectParsers::MakeNumberSignedSineProvider ) );
+		parserMap.emplace( "cosine", MakeObjectParseData( &ObjectParsers::MakeNumberCosineProvider ) );
+		parserMap.emplace( "signedCosine", MakeObjectParseData( &ObjectParsers::MakeNumberSignedCosineProvider ) );
+		parserMap.emplace( "set", MakeObjectParseData( &ObjectParsers::MakeSetAction ) );
+		parserMap.emplace( "shift", MakeObjectParseData( &ObjectParsers::MakeShiftAction ) );
+		parserMap.emplace( "fade", MakeObjectParseData( &ObjectParsers::MakeFadeAction ) );
+		parserMap.emplace( "trigger", MakeObjectParseData( &ObjectParsers::MakeTriggerAction ) );
+		parserMap.emplace( "block", MakeObjectParseData( &ObjectParsers::MakeBlock ) );
+		parserMap.emplace( "expr", MakeObjectParseData( &ObjectParsers::MakeExpressionProvider ) );
 
 		// Initialise the parameter name to storage location map
-		parameterParseMap.emplace( "delay", MakeParseData( NumberParameter, storage.Delay ) );
-		parameterParseMap.emplace( "count", MakeParseData( NumberParameter, storage.Count ) );
-		parameterParseMap.emplace( "time", MakeParseData( NumberParameter, storage.Time ) );
-		parameterParseMap.emplace( "segment", MakeParseData( SegmentParameter, storage.Segment ) );
-		parameterParseMap.emplace( "led", MakeParseData( NumberParameter, storage.Led ) );
-		parameterParseMap.emplace( "startLed", MakeParseData( NumberParameter, storage.Led ) );
-		parameterParseMap.emplace( "reverse", MakeParseData( BooleanParameter, storage.ReverseFlag ) );
-		parameterParseMap.emplace( "interval", MakeParseData( NumberParameter, storage.Interval ) );
-		parameterParseMap.emplace( "start", MakeParseData( ColourParameter, storage.StartColour ) );
-		parameterParseMap.emplace( "end", MakeParseData( ColourParameter, storage.EndColour ) );
-		parameterParseMap.emplace( "step", MakeParseData( NumberParameter, storage.Interval ) );
-		parameterParseMap.emplace( "min", MakeParseData( NumberParameter, storage.Min ) );
-		parameterParseMap.emplace( "max", MakeParseData( NumberParameter, storage.Max ) );
-		parameterParseMap.emplace( "type", MakeParseData( ItemTypeParameter, storage.ExecutionType ) );
-		parameterParseMap.emplace( "colour", MakeParseData( ColourParameter, storage.Colour ) );
-		parameterParseMap.emplace( "hue", MakeParseData( NumberParameter, storage.Hue ) );
-		parameterParseMap.emplace( "sat", MakeParseData( NumberParameter, storage.Sat ) );
-		parameterParseMap.emplace( "value", MakeParseData( NumberParameter, storage.Value ) );
-		parameterParseMap.emplace( "fade", MakeParseData( NumberParameter, storage.FadeAmount ) );
-		parameterParseMap.emplace( "next", MakeParseData( TriggerParameter, storage.NextTrigger ) );
-		parameterParseMap.emplace( "reset", MakeParseData( TriggerParameter, storage.ResetTrigger ) );
-		parameterParseMap.emplace( "fill", MakeParseData( BooleanParameter, storage.FillFlag ) );
-		parameterParseMap.emplace( "when", MakeParseData( NumberParameter, storage.When ) );
-		parameterParseMap.emplace( "whenNot", MakeParseData( NumberParameter, storage.WhenNot ) );
-		parameterParseMap.emplace( "init", MakeParseData( NumberParameter, storage.Init ) );
+		parameterParseMap.emplace( "delay", MakeParseData( NumberParameter, (BaseDefinedObject*&)storage.Delay ) );
+		parameterParseMap.emplace( "count", MakeParseData( NumberParameter, (BaseDefinedObject*&)storage.Count ) );
+		parameterParseMap.emplace( "time", MakeParseData( NumberParameter, (BaseDefinedObject*&)storage.Time ) );
+		parameterParseMap.emplace( "segment", MakeParseData( SegmentParameter, (BaseDefinedObject*&)storage.Segment ) );
+		parameterParseMap.emplace( "led", MakeParseData( NumberParameter, (BaseDefinedObject*&)storage.Led ) );
+		parameterParseMap.emplace( "startLed", MakeParseData( NumberParameter, (BaseDefinedObject*&)storage.Led ) );
+		parameterParseMap.emplace( "reverse", MakeParseData( BooleanParameter, (BaseDefinedObject*&)storage.ReverseFlag ) );
+		parameterParseMap.emplace( "interval", MakeParseData( NumberParameter, (BaseDefinedObject*&)storage.Interval ) );
+		parameterParseMap.emplace( "step", MakeParseData( NumberParameter, (BaseDefinedObject*&)storage.Interval ) );
+		parameterParseMap.emplace( "min", MakeParseData( NumberParameter, (BaseDefinedObject*&)storage.Min ) );
+		parameterParseMap.emplace( "max", MakeParseData( NumberParameter, (BaseDefinedObject*&)storage.Max ) );
+		parameterParseMap.emplace( "type", MakeParseData( ItemTypeParameter, (BaseDefinedObject*&)storage.ExecutionType ) );
+		parameterParseMap.emplace( "colour", MakeParseData( ColourParameter, (BaseDefinedObject*&)storage.Colour ) );
+		parameterParseMap.emplace( "hue", MakeParseData( NumberParameter, (BaseDefinedObject*&)storage.Hue ) );
+		parameterParseMap.emplace( "sat", MakeParseData( NumberParameter, (BaseDefinedObject*&)storage.Sat ) );
+		parameterParseMap.emplace( "value", MakeParseData( NumberParameter, (BaseDefinedObject*&)storage.Value ) );
+		parameterParseMap.emplace( "fade", MakeParseData( NumberParameter, (BaseDefinedObject*&)storage.FadeAmount ) );
+		parameterParseMap.emplace( "next", MakeParseData( TriggerParameter, (BaseDefinedObject*&)storage.NextTrigger ) );
+		parameterParseMap.emplace( "reset", MakeParseData( TriggerParameter, (BaseDefinedObject*&)storage.ResetTrigger ) );
+		parameterParseMap.emplace( "fill", MakeParseData( BooleanParameter, (BaseDefinedObject*&)storage.FillFlag ) );
+		parameterParseMap.emplace( "when", MakeParseData( NumberParameter, (BaseDefinedObject*&)storage.When ) );
+		parameterParseMap.emplace( "whenNot", MakeParseData( NumberParameter, (BaseDefinedObject*&)storage.WhenNot ) );
+		parameterParseMap.emplace( "init", MakeParseData( NumberParameter, (BaseDefinedObject*&)storage.Init ) );
+		parameterParseMap.emplace( "trace", MakeParseData( BooleanParameter, (BaseDefinedObject*&)storage.Trace ) );
+
+		// Add the built-in expression operators to the object store
+		objectStorage.AddObject( "add", new ExpressionOperator( ExpressionOperator::add ) );
+		objectStorage.AddObject( "sub", new ExpressionOperator( ExpressionOperator::subtract ) );
+		objectStorage.AddObject( "div", new ExpressionOperator( ExpressionOperator::divide ) );
+		objectStorage.AddObject( "div", new ExpressionOperator( ExpressionOperator::divide ) );
+		objectStorage.AddObject( "mul", new ExpressionOperator( ExpressionOperator::multiply ) );
 	}
 
 	/// @brief Find a parser for the specified type and run it
@@ -78,38 +78,24 @@ namespace Lights
 	/// @return
 	bool ObjectParsers::ParseDefinition(string typeName)
 	{
-		bool found = false;
+		// Reset the error string
 		error = "";
 
-		// Look for commands first
-		map<string, DefinitionParser>::iterator it = commandMap.find(typeName);
-		if (it != commandMap.end())
+		// Look in the parser map
+		map<string, ObjectParseData>::iterator it = parserMap.find( typeName );
+		if ( it != parserMap.end() )
 		{
-			found = true;
+			cout << "Found parser for " << typeName << "\n";
 
-			// Process the command
-			(this->*it->second)();
-		}
-		else
-		{
-			// Not a command, try an object definition
-			it = parserMap.find(typeName);
-			if (it != parserMap.end())
+			// Extract parameters from the tokens
+			if ( ExtractParameters( it->second.IsCommand ) == true )
 			{
-				cout << "Found parser for " << typeName << "\n";
-
-				found = true;
-
-				// Extract parameters from the tokens
-				if (ExtractParameters() == true)
-				{
-					// Continue with the creation of the object
-					(this->*it->second)();
-				}
+				// Continue with the creation of the object
+				( this->*it->second.Parser )( );
 			}
 		}
 
-		return found;
+		return ( it != parserMap.end() );
 	}
 
 	/// @brief Create a Colour from the tokens and add to the named collection held by Colour
@@ -118,8 +104,8 @@ namespace Lights
 	{
 		// Define a color using either RGB values or a combined value
 		// So there should be either 1 or 3 numbers
-		if ( ( storage.CheckObjectsType<NumberProvider>() == true ) &&
-			( ( storage.Objects.size() == 1 ) || ( storage.Objects.size() == 3 ) ) )
+		if ( ( ( storage.Objects.size() == 1 ) || ( storage.Objects.size() == 3 ) ) &&
+			( storage.CheckObjectsType<NumberProvider>() == true ) )
 		{
 			if ( storage.Objects.size() == 1 )
 			{
@@ -146,17 +132,17 @@ namespace Lights
 	/// @return
 	void ObjectParsers::BrightnessCommand()
 	{
-		// The brightness command expects a numeric value
-		if (tokens->TokensLeft() == 1)
+		// There should be a single numeric arguement
+		if ( ( storage.Objects.size() == 1 ) && ( storage.CheckObjectsType<NumberProvider>() == true ) )
 		{
-			int32_t brightnessValue;
-			if ( ( tokens->NextInt( brightnessValue ) == true ) && ( brightnessValue >= 0 ) && ( brightnessValue < 256 ) )
+			int32_t brightnessValue = GetStoredNumber( 0 );
+			if ( ( brightnessValue >= 0 ) && ( brightnessValue < 256 ) )
 			{
-				commandStrip->SetBrightness(brightnessValue);
+				commandStrip->SetBrightness( brightnessValue );
 			}
 			else
 			{
-				ReportError( "Brightness value is not valid: %", tokens->Current() );
+				ReportError( "Brightness value is not valid: %", brightnessValue );
 			}
 		}
 		else
@@ -165,44 +151,20 @@ namespace Lights
 		}
 	}
 
-	/// @brief Execute a trace command
-	/// @return
-	void ObjectParsers::TraceCommand()
-	{
-		// There should be just a single on or off specified
-		if (tokens->TokensLeft() == 1)
-		{
-			Trace::TraceOn(tokens->Next() == "on");
-		}
-		else
-		{
-			ReportError( "Invalid number of tokens for a trace command" );
-		}
-	}
-
 	/// @brief Execute a Block
 	/// @return
 	void ObjectParsers::ExecuteBlockCommand()
 	{
 		// There should be just one Block specified
-		if (tokens->TokensLeft() == 1)
+		if ( ( storage.Objects.size() == 1 ) && ( storage.CheckObjectsType<Block>() == true ) )
 		{
-			string blockName = tokens->Next();
-			Block *blockToExecute = dynamic_cast<Block *>(objectStorage.GetObject(blockName));
-
-			if (blockToExecute != nullptr)
-			{
-				cout << "Running Block " << blockName << "\n";
-				commander->BlockToExecute(blockToExecute);
-			}
-			else
-			{
-				ReportError( "Cannot find block %", blockName );
-			}
+			Block* blockToExecute = (Block*)storage.Objects[ 0 ];
+			cout << "Running Block " << blockToExecute->Name() << "\n";
+			commander->BlockToExecute( blockToExecute );
 		}
 		else
 		{
-			ReportError( "Invalid number of tokens for a block execution command" );
+			ReportError( "Invalid number of arguments for a block execution command" );
 		}
 	}
 
@@ -211,29 +173,35 @@ namespace Lights
 	/// @param typeName
 	void ObjectParsers::StoreObject(BaseDefinedObject *object, string typeName)
 	{
-		objectStorage.AddObject(storage.Name, object);
+		objectStorage.AddObject( storage.Name, object );
+		object->TraceOn( GetStoredBoolean( false, storage.Trace ) );
+
 		cout << "Added " << typeName << " " << storage.Name << "\n";
 	}
 
-	/// @brief Extract all the known named parameters, colours, uints and stored object references
+	/// @brief Extract all the known named parameters, colours, ints and stored object references
 	/// from the Tokeniser
 	/// @return
-	bool ObjectParsers::ExtractParameters()
+	bool ObjectParsers::ExtractParameters( bool isCommand )
 	{
 		// Remove any old parameters
 		storage.ClearData();
 
-		// Check for at least a name
-		if (tokens->TokensLeft() > 0)
+		// Check for at least a name (if not a command )
+		if ( ( isCommand == true ) || ( tokens->TokensLeft() > 0 ) )
 		{
-			storage.Name = tokens->Next();
+			// The first parameter is the object name, unless this is a command
+			if ( isCommand == false )
+			{
+				storage.Name = tokens->Next();
+			}
 
 			// Check for parameters and references to stored objects
 			while ((tokens->TokensLeft() > 0) && (Error() == false))
 			{
 				// If the next token is a parameter then use the parameter map to process it
 				string token = tokens->Next();
-				uint markerPosition = token.find('=');
+				size_t markerPosition = token.find( '=' );
 
 				if ((markerPosition > 0) && (markerPosition < token.length() - 1))
 				{
@@ -260,6 +228,7 @@ namespace Lights
 					// add it to the storage vector for objects.
 					// Check if it is a reference to a stored item. If it is then add it to the
 					// storage vector for objects.
+					// Check if is a boolean value. If it is then wrap it up in a BooleanProvider.
 					try
 					{
 						// Try and convert to a number.
@@ -283,7 +252,19 @@ namespace Lights
 							}
 							else
 							{
-								ReportError( "% is not a number, colour or stored object", token );
+								// Look for true or false
+								if ( token == "true" )
+								{
+									storage.AddObject( new BooleanProvider( true ) );
+								}
+								else if ( token == "false" )
+								{
+									storage.AddObject( new BooleanProvider( false ) );
+								}
+								else
+								{
+									ReportError( "% is not a number, colour, stored object or boolean", token );
+								}
 							}
 						}
 					}

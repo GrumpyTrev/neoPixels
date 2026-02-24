@@ -2,8 +2,6 @@
 #include "RandomNumberProvider.hpp"
 #include <vector>
 
-using namespace std;
-
 namespace Lights
 {
 	class RandomNumberSetProvider : public RandomNumberProvider
