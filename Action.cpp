@@ -73,11 +73,6 @@ namespace Lights
 			delayTime = make_timeout_time_ms(postDelayValue);
 		}
 
-		if ( TraceOn() == true )
-		{
-			cout << TimeDisplay() << "Action " << Name() << " Op count " << operationCount << " post delay " << postDelayValue << "\n";
-		}
-
 		return postDelayValue > 0;
 	}
 }

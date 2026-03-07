@@ -1,15 +1,29 @@
 #pragma once
 #include "NumberProvider.hpp"
+#include <iostream>
 
 namespace Lights
 {
 	class RandomNumberProvider : public NumberProvider
 	{
 	public:
-		inline RandomNumberProvider( uint16_t min, uint16_t max ) : minimum( min ), maximum( max ), NumberProvider( 0 ) {};
+		inline RandomNumberProvider( uint16_t min, uint16_t max ) : minimum( min ), maximum( max ), NumberProvider( 0 )
+		{
+		}
 
 		/// @brief Supply the next number
-		inline virtual void Next() { SetValue( Random16( minimum, maximum ) ); }
+		inline virtual void Next()
+		{
+			SetValue( Random16( minimum, maximum ) );
+
+			if ( TraceOn() == true )
+			{
+				cout << "Random " << Name() << " set to " << GetValue() << "\n";
+			}
+		}
+
+		/// @brief Initialise the provider
+		inline virtual void Initialise() { Next(); }
 
 		static inline uint16_t Random16()
 		{

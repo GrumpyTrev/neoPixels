@@ -7,11 +7,12 @@ namespace Lights
 	class RandomNumberSetProvider : public RandomNumberProvider
 	{
 	public:
-		inline RandomNumberSetProvider( uint16_t min, uint16_t max ) : RandomNumberProvider( min, max ) {};
+		inline RandomNumberSetProvider( uint16_t min, uint16_t max ) : RandomNumberProvider( min, max ) { Next(); }
 
 		void Next();
 
-		inline void Reset() { numberset.clear(); Next(); }
+		/// @brief Initialise the provider
+		inline void Initialise() { numberset.clear(); Next(); }
 
 	private:
 		vector<uint16_t> numberset;

@@ -28,20 +28,12 @@ namespace Lights
             uint8_t sat = satProvider->Value();
             uint8_t value = valProvider->Value();
             SetValue( Colour::ColourHSV( hue, sat, value ) );
-        }
 
-        /// @brief Return the current colour
-        /// @return
-        inline virtual Colour Value()
-        {
-            // Make sure to get a colour if this provider has not been initialised yet
-            if (GetValue().value == Colour::InvalidColour.value)
+            if ( TraceOn() == true )
             {
-                Next();
+                cout << "ColourHSV " << Name() << " hue " << hue << " val " << (uint16_t)value << "\n";
             }
-
-            return ColourProvider::Value();
-        };
+        }
 
 	protected:
 		/// @brief Hue provider

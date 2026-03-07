@@ -1,5 +1,6 @@
 #pragma once
 #include "ProviderBase.hpp"
+#include "iostream"
 
 namespace Lights
 {
@@ -12,30 +13,40 @@ namespace Lights
 		/// @brief Return the number held by this provider
 		///		   Although NumberProvider is fixed, it is the base class for other number providers
 		///		   that may support more complex behaviour.
-		///        Check for a self triggering.
 		/// @return 
 		inline virtual int32_t Value()
 		{
-			int32_t retVal = providedValue;
-
+			// Does this provider require initialising
+			if ( initialised == false )
+			{
+				Initialise();
+				initialised = true;
+			}
 			// Is this is self triggering then get the next value
-			if ( selfIncrement == true )
+			else if ( selfIncrement == true )
 			{
 				Next();
 			}
 
-			return retVal;
+			if ( TraceOn() == true )
+			{
+				cout << "Provider " << Name() << " " << providedValue << "\n";
+			}
+
+			return providedValue;
 		}
 
 		/// @brief Return the current value without going through Value()
 		/// @return 
 		inline virtual int32_t GetValue() { return providedValue; }
 
-		/// @brief Directly set the underlyinmg value
+		/// @brief Directly set the underlying value
 		/// @param value 
 		inline virtual void SetValue( int32_t value ) { providedValue = value; }
 
 	protected:
+
+		/// @brief The value to be returned by this provider
 		int32_t providedValue = 0;
 	};
 }

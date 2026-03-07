@@ -109,12 +109,13 @@ namespace Lights
 	/// @return
 	void ObjectParsers::MakeNumberIntervalProvider()
 	{
-		// If the minimum or maximum are not specified then make number providers for them
+		// If the minimum, maximum or step providers are not specified then make number providers for them
 		NumberProvider* minProvider = ( storage.Min != nullptr ) ? storage.Min : new NumberProvider( 0 );
 		NumberProvider* maxProvider = ( storage.Max != nullptr ) ? storage.Max : new NumberProvider( 65535 );
+		NumberProvider* stepProvider = ( storage.Interval != nullptr ) ? storage.Interval : new NumberProvider( 1 );
 
 		StoreObject( ApplyCommonProviderParameters(
-			new NumberIntervalProvider( minProvider, maxProvider, GetStoredNumber( 1, storage.Interval ),
+			new NumberIntervalProvider( minProvider, maxProvider, stepProvider,
 				GetStoredBoolean( false, storage.ReverseFlag ) ) ), "NumberIntervalProvider" );
 	}
 

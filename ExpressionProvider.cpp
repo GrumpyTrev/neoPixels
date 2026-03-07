@@ -9,8 +9,8 @@ using namespace std;
 
 namespace Lights
 {
-    /// @brief Calculate the next number using the numbers and operands in the expressionVector
-    void ExpressionProvider::Next()
+    /// @brief Calculate the value using the numbers and operands in the expressionVector
+    int32_t ExpressionProvider::Value()
     {
         std::stack<int32_t> operandStack;
 
@@ -29,7 +29,12 @@ namespace Lights
             NumberProvider* itemNumber = dynamic_cast<NumberProvider*>( item );
             if ( itemNumber != nullptr )
             {
-                operandStack.push( itemNumber->Value() );
+                int32_t value = itemNumber->Value();
+                operandStack.push( value );
+                if ( TraceOn() == true )
+                {
+                    cout << "Calculated expression provider " << Name() << " pushing " << value << "\n";
+                }
             }
             else
             {
@@ -95,7 +100,12 @@ namespace Lights
         {
             providedValue = operandStack.top();
 
-//            cout << "Calculated expression provider " << Name() << " value " << providedValue << "\n";
+            if ( TraceOn() == true )
+            {
+                cout << "Calculated expression provider " << Name() << " value " << providedValue << "\n";
+            }
         }
+
+        return providedValue;
     }
 }

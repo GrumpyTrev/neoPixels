@@ -1,5 +1,6 @@
 #pragma once
 #include "Action.hpp"
+#include <iostream>
 
 namespace Lights
 {
@@ -74,7 +75,16 @@ namespace Lights
 			{
 				if ( CanSet() == true )
 				{
-					itemSegment->Value()->SetPixelColour( ledNumberProvider->Value(), actionColourProvider->Value() );
+					int32_t ledNumber = ledNumberProvider->Value();
+					Colour ledColour = actionColourProvider->Value();
+					itemSegment->Value()->SetPixelColour( ledNumber, ledColour );
+
+					if ( TraceOn() == true )
+					{
+						HSVColour traceColour = ledColour.ToHSV();
+
+						cout << "Set " << Name() << " " << ledNumber << " hue " << traceColour.hue << " val " << (uint16_t)traceColour.value << "\n";
+					}
 				}
 			}
 		}

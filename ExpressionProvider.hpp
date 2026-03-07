@@ -12,11 +12,9 @@ namespace Lights
         inline ExpressionProvider( vector<BaseDefinedObject*> const& objects ) : NumberProvider( 0 )
         {
             copy( objects.begin(), objects.end(), back_inserter( expressionVector ) );
-            Next();
         }
 
-        /// @brief Calculated the next number
-        void Next();
+        int32_t Value();
 
     private:
 

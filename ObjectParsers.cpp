@@ -176,7 +176,7 @@ namespace Lights
 		objectStorage.AddObject( storage.Name, object );
 		object->TraceOn( GetStoredBoolean( false, storage.Trace ) );
 
-		cout << "Added " << typeName << " " << storage.Name << "\n";
+		cout << "Added " << typeName << " " << storage.Name << " trace=" << std::boolalpha << object->TraceOn() << "\n";
 	}
 
 	/// @brief Extract all the known named parameters, colours, ints and stored object references

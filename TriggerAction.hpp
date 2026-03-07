@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "Action.hpp"
+#include <iostream>
 
 namespace Lights
 {
@@ -68,6 +69,11 @@ namespace Lights
         /// @brief Trigger all of the callbacks
         inline void Execute()
         {
+            if ( TraceOn() == true )
+            {
+                cout << "Trigger " << Name() << " callbacks " << callbacks.size() << "\n";
+            }
+
             for ( CallbackBase* callback : callbacks )
             {
                 callback->Execute();

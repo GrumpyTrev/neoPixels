@@ -19,8 +19,8 @@ namespace Lights
             SetValue( AccessLookupTable( index ) );
         }
 
-        /// @brief Reset the provider
-        inline void Reset()
+        /// @brief Initialise the provider
+        inline virtual void Initialise()
         {
             // Initialise the index. This will just take the lowest 8 bits of any startProvider value
             index = ( startProvider == nullptr ) ? 0 : startProvider->Value();
@@ -36,8 +36,6 @@ namespace Lights
 
             // The interval is 256 / waveLength
             interval = 256 / waveLength;
-
-            Reset();
         }
 
     protected:

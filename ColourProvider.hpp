@@ -11,19 +11,25 @@ namespace Lights
 		inline ColourProvider( Colour initial ) : providedValue( initial ) {};
 		inline virtual Colour Value()
 		{
-			Colour retVal = providedValue;
-
-			if ( selfIncrement == true )
+			// Does this provider require initialising
+			if ( initialised == false )
+			{
+				Initialise();
+				initialised = true;
+			}
+			// Is this is self triggering then get the next value
+			else if ( selfIncrement == true )
 			{
 				Next();
 			}
 
-			return retVal;
+			return providedValue;
 		}
+
 		inline virtual Colour GetValue() { return providedValue; }
 		inline virtual void SetValue( Colour value ) { providedValue = value; }
 
 	protected:
-		Colour providedValue = false;
+		Colour providedValue = Colour::InvalidColour;
 	};
 }

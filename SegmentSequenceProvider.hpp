@@ -8,7 +8,7 @@ namespace Lights
 	public:
 		inline SegmentSequenceProvider() : SegmentProvider( nullptr ) {}
 		inline void Next() { providedValue = sequence.Next(); }
-		inline void Reset() { sequence.Reset(); }
+		inline void Initialise() { sequence.Reset(); Next(); }
 		inline void AddValue( Segment* valueToAdd ) { sequence.Add( valueToAdd ); }
 
 	private:
