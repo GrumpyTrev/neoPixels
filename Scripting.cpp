@@ -13,7 +13,8 @@ namespace Lights
 		"randomNumber valueSelector min=192 max=256",
 		"colourHSV hsvProvider hue=hueSelector sat=255 value=valueSelector",
 		"fade fader fade=fadeAmount",
-		"set setLed colour=hsvProvider whenNot=twinkleSelector",
+		"expr twinkleAllowed twinkleSelector not",
+		"set setLed colour=hsvProvider while=twinkleAllowed",
 		"block effect5 delay=delay fader setLed",
 		"x effect5",
 	};

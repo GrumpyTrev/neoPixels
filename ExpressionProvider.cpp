@@ -48,6 +48,20 @@ namespace Lights
                             cout << "Calculated expression provider " << Name() << " pushing self " << providedValue << "\n";
                         }
                     }
+                    else if ( itemOperator->Type() == ExpressionOperator::logicNot )
+                    {
+                        if ( operandStack.size() >= 1 )
+                        {
+                            int32_t operand = operandStack.top();
+                            operandStack.pop();
+
+                            operandStack.push( operand > 0 ? 0 : 1 );
+                        }
+                        else
+                        {
+                            runtimeError = true;
+                        }
+                    }
                     // Process binary operators. Pop the top two numbers off the stack and apply the operator
                     else if ( operandStack.size() >= 2 )
                     {

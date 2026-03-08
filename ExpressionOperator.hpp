@@ -20,6 +20,8 @@ namespace Lights
             multiply,
             /// @brief This is the self reference operator
             self,
+            /// @brief Logical Not operator
+            logicNot,
         };
 
         /// @brief Create an ExpressionOperator with the specfied type

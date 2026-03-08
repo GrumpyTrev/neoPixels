@@ -25,8 +25,7 @@ namespace Lights
 			ApplyCommonItemParameters( definedAction );
 			definedAction->Provider( storage.Colour );
 			definedAction->LedProvider( storage.Led );
-			definedAction->WhenProvider( storage.When );
-			definedAction->WhenNotProvider( storage.WhenNot );
+			definedAction->WhileProvider( storage.While );
 			definedAction->FillWithSingleColour( GetStoredBoolean( false, storage.FillFlag ) );
 			StoreObject( definedAction, "SetAction" );
 		}

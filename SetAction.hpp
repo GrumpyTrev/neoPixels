@@ -16,8 +16,7 @@ namespace Lights
 		inline SetAction(const SetAction &rhs) : Action(rhs)
 		{
 			ledNumberProvider = rhs.ledNumberProvider;
-			whenProvider = rhs.whenProvider;
-			whenNotProvider = rhs.whenNotProvider;
+			whileProvider = rhs.whileProvider;
 			fillWithSingleColour = rhs.fillWithSingleColour;
 		};
 
@@ -29,13 +28,9 @@ namespace Lights
 		/// @param provider
 		inline void LedProvider( NumberProvider* provider ) { ledNumberProvider = provider; }
 
-		/// @brief Allow the When NumberProvider to be specified
+		/// @brief Allow the While NumberProvider to be specified
 		/// @param provider
-		inline void WhenProvider( NumberProvider* provider ) { whenProvider = provider; }
-
-		/// @brief Allow the WhenNot NumberProvider to be specified
-		/// @param provider
-		inline void WhenNotProvider( NumberProvider* provider ) { whenNotProvider = provider; }
+		inline void WhileProvider( NumberProvider* provider ) { whileProvider = provider; }
 
 		/// @brief Set the fillWithSingleColour flag
 		/// @param value 
@@ -95,18 +90,15 @@ namespace Lights
 		/// @return 
 		bool inline CanSet()
 		{
-			// The operation is allowed if there are no conditions, or if either of the conditions are true
-			return ( ( whenProvider == nullptr ) && ( whenNotProvider == nullptr ) ) ||
-				( ( whenProvider != nullptr ) && ( whenProvider->Value() > 0 ) ) ||
-				( ( whenNotProvider != nullptr ) && ( whenNotProvider->Value() == 0 ) );
+			// The operation is allowed if there is no while condition, or if the condition is true
+			return ( whileProvider == nullptr ) || ( whileProvider->Value() > 0 );
 		}
 
 		/// @brief A NumberProvider used to provide the Led number
 		NumberProvider* ledNumberProvider = nullptr;
 
-		/// @brief Providers determining whether or not the set action should be carried out
-		NumberProvider* whenProvider = nullptr;
-		NumberProvider* whenNotProvider = nullptr;
+		/// @brief Provider determining whether or not the set action should be carried out
+		NumberProvider* whileProvider = nullptr;
 
 		/// @brief A flag used to determine whether or not a single colour should be used when setting the 
 		/// entire segment

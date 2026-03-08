@@ -212,8 +212,7 @@ namespace Lights
 				ResetTrigger = nullptr;
 				FillFlag = nullptr;
 				FadeAmount = nullptr;
-				When = nullptr;
-				WhenNot = nullptr;
+				While = nullptr;
 				Init = nullptr;
 				Trace = nullptr;
 				Objects.clear();
@@ -265,8 +264,7 @@ namespace Lights
 			TriggerAction* ResetTrigger;
 			BooleanProvider* FillFlag;
 			NumberProvider* FadeAmount;
-			NumberProvider* When;
-			NumberProvider* WhenNot;
+			NumberProvider* While;
 			NumberProvider* Init;
 			BooleanProvider* Trace;
 

@@ -60,8 +60,7 @@ namespace Lights
 		parameterParseMap.emplace( "next", MakeParseData( TriggerParameter, (BaseDefinedObject*&)storage.NextTrigger ) );
 		parameterParseMap.emplace( "reset", MakeParseData( TriggerParameter, (BaseDefinedObject*&)storage.ResetTrigger ) );
 		parameterParseMap.emplace( "fill", MakeParseData( BooleanParameter, (BaseDefinedObject*&)storage.FillFlag ) );
-		parameterParseMap.emplace( "when", MakeParseData( NumberParameter, (BaseDefinedObject*&)storage.When ) );
-		parameterParseMap.emplace( "whenNot", MakeParseData( NumberParameter, (BaseDefinedObject*&)storage.WhenNot ) );
+		parameterParseMap.emplace( "while", MakeParseData( NumberParameter, (BaseDefinedObject*&)storage.While ) );
 		parameterParseMap.emplace( "init", MakeParseData( NumberParameter, (BaseDefinedObject*&)storage.Init ) );
 		parameterParseMap.emplace( "trace", MakeParseData( BooleanParameter, (BaseDefinedObject*&)storage.Trace ) );
 
@@ -72,6 +71,7 @@ namespace Lights
 		objectStorage.AddObject( "div", new ExpressionOperator( ExpressionOperator::divide ) );
 		objectStorage.AddObject( "mul", new ExpressionOperator( ExpressionOperator::multiply ) );
 		objectStorage.AddObject( "self", new ExpressionOperator( ExpressionOperator::self ) );
+		objectStorage.AddObject( "not", new ExpressionOperator( ExpressionOperator::logicNot ) );
 	}
 
 	/// @brief Find a parser for the specified type and run it
