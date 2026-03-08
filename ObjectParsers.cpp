@@ -71,6 +71,7 @@ namespace Lights
 		objectStorage.AddObject( "div", new ExpressionOperator( ExpressionOperator::divide ) );
 		objectStorage.AddObject( "div", new ExpressionOperator( ExpressionOperator::divide ) );
 		objectStorage.AddObject( "mul", new ExpressionOperator( ExpressionOperator::multiply ) );
+		objectStorage.AddObject( "self", new ExpressionOperator( ExpressionOperator::self ) );
 	}
 
 	/// @brief Find a parser for the specified type and run it

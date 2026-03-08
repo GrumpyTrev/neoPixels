@@ -10,15 +10,12 @@ using namespace std;
 namespace Lights
 {
     /// @brief Calculate the value using the numbers and operands in the expressionVector
-    int32_t ExpressionProvider::Value()
+    void ExpressionProvider::Next()
     {
         std::stack<int32_t> operandStack;
 
         bool runtimeError = false;
         int32_t expressionIndex = 0;
-
-        // Default the provided value to 0 in case there is a runtime error
-        providedValue = 0;
 
         while ( ( runtimeError == false ) && ( expressionIndex < expressionVector.size() ) )
         {
@@ -42,8 +39,17 @@ namespace Lights
                 ExpressionOperator* itemOperator = dynamic_cast<ExpressionOperator*>( item );
                 if ( itemOperator != nullptr )
                 {
-                    // Pop the top two numbers off the stack and apply the operator
-                    if ( operandStack.size() >= 2 )
+                    // Special unary and nullary operators
+                    if ( itemOperator->Type() == ExpressionOperator::self )
+                    {
+                        operandStack.push( providedValue );
+                        if ( TraceOn() == true )
+                        {
+                            cout << "Calculated expression provider " << Name() << " pushing self " << providedValue << "\n";
+                        }
+                    }
+                    // Process binary operators. Pop the top two numbers off the stack and apply the operator
+                    else if ( operandStack.size() >= 2 )
                     {
                         int32_t operand2 = operandStack.top();
                         operandStack.pop();
@@ -96,16 +102,11 @@ namespace Lights
         }
 
         // If there was a runtime error then set the provided value to 0, otherwise pop the result off the stack
-        if ( ( runtimeError == false ) && ( operandStack.size() == 1 ) )
+        providedValue = ( runtimeError == false ) && ( operandStack.size() == 1 ) ? operandStack.top() : 0;
+
+        if ( TraceOn() == true )
         {
-            providedValue = operandStack.top();
-
-            if ( TraceOn() == true )
-            {
-                cout << "Calculated expression provider " << Name() << " value " << providedValue << "\n";
-            }
+            cout << "Calculated expression provider " << Name() << " value " << providedValue << "\n";
         }
-
-        return providedValue;
     }
 }

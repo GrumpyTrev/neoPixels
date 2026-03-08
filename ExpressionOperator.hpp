@@ -18,6 +18,8 @@ namespace Lights
             divide,
             /// @brief This is a multiplication operator
             multiply,
+            /// @brief This is the self reference operator
+            self,
         };
 
         /// @brief Create an ExpressionOperator with the specfied type

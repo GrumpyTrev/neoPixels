@@ -234,7 +234,7 @@ namespace Lights
 
 			if ( validObjects == true )
 			{
-				StoreObject( ApplyCommonProviderParameters( new ExpressionProvider( storage.Objects ) ),
+				StoreObject( ApplyCommonProviderParameters( new ExpressionProvider( storage.Init, storage.Objects ) ),
 					"ExpressionProvider" );
 			}
 			else
