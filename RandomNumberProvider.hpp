@@ -14,6 +14,9 @@ namespace Lights
 		/// @brief Supply the next number
 		inline virtual void Next()
 		{
+			// Set the initialise flag in case this is called before a value is obtained
+			initialised = true;
+
 			SetValue( Random16( minimum, maximum ) );
 
 			if ( TraceOn() == true )

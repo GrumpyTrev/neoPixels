@@ -10,7 +10,7 @@ namespace Lights
 		inline NumberSequenceProvider() : NumberProvider( 0 ) {}
 		inline virtual void Next()
 		{
-			providedValue = sequence.Next();
+			providedValue = ( indexProvider == nullptr ) ? sequence.Next() : sequence[ indexProvider->Value() ];
 
 			if ( TraceOn() == true )
 			{

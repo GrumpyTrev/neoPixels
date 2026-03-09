@@ -13,6 +13,24 @@ namespace Lights
 		inline void SelfIncrement( bool isSelf ) { selfIncrement = isSelf; }
 
 	protected:
+
+		/// @brief If initialisation is required then perform it 
+		/// @return 
+		inline bool InitialisationRequired()
+		{
+			bool wasInitialised = false;
+
+			// If this provider has not been initialised yet, then make sure that is done now
+			if ( initialised == false )
+			{
+				wasInitialised = true;
+				initialised = true;
+				Initialise();
+			}
+
+			return wasInitialised;
+		}
+
 		/// @brief Should this provider automatically provide a new value everytime it is called
 		bool selfIncrement = true;
 
@@ -37,6 +55,10 @@ namespace Lights
 			return retVal;
 		}
 		inline void Reset() { index = 0; }
+		inline T operator[] ( uint16_t item )
+		{
+			return ( ( item >= 0 ) && ( item < sequence.size() ) ) ? sequence[ item ] : sequence[ 0 ];
+		}
 
 	private:
 		vector<T> sequence;

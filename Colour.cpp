@@ -6,18 +6,13 @@ using namespace std;
 namespace Lights
 {
 	const Colour Colour::InvalidColour = Colour( 0xffffffff );
-	const Colour Colour::Black = Colour(0, 0, 0);
 
 	map<string, Colour> colourMap{
-		{"Black", Colour(0, 0, 0)},
-		{"White", Colour(0xff, 0xff, 0xff)},
-		{"Red", Colour(0xff, 0, 0)},
-		{"Green", Colour(0, 0xff, 0)},
-		{"Blue", Colour(0, 0, 0xff)},
-		{"RubyRed", Colour(24, 17, 95)},
-		{"Ochre", Colour(0xff4e20)},
-		{"MagentaPink", Colour(0xc70075)},
-		{"WarmFluorescent", Colour(0xFFF4E5)} /* 0 K, 255, 244, 229 */
+		{"Black", Colour( 0, 0, 0 )},
+		{"White", Colour( 0xff, 0xff, 0xff )},
+		{"Red", Colour( 0xff, 0, 0 )},
+		{"Green", Colour( 0, 0xff, 0 )},
+		{"Blue", Colour( 0, 0, 0xff )},
 	};
 
 	/// @brief Get a predefined colour from the colour name

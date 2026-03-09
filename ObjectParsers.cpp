@@ -56,6 +56,7 @@ namespace Lights
 		parameterParseMap.emplace( "hue", MakeParseData( NumberParameter, (BaseDefinedObject*&)storage.Hue ) );
 		parameterParseMap.emplace( "sat", MakeParseData( NumberParameter, (BaseDefinedObject*&)storage.Sat ) );
 		parameterParseMap.emplace( "value", MakeParseData( NumberParameter, (BaseDefinedObject*&)storage.Value ) );
+		parameterParseMap.emplace( "index", MakeParseData( NumberParameter, (BaseDefinedObject*&)storage.Value ) );
 		parameterParseMap.emplace( "fade", MakeParseData( NumberParameter, (BaseDefinedObject*&)storage.FadeAmount ) );
 		parameterParseMap.emplace( "next", MakeParseData( TriggerParameter, (BaseDefinedObject*&)storage.NextTrigger ) );
 		parameterParseMap.emplace( "reset", MakeParseData( TriggerParameter, (BaseDefinedObject*&)storage.ResetTrigger ) );
@@ -115,9 +116,9 @@ namespace Lights
 			}
 			else if ( storage.Objects.size() == 3 )
 			{
-				uint8_t redValue = GetStoredNumber( 0 );
-				uint8_t greenValue = GetStoredNumber( 1 );
-				uint8_t blueValue = GetStoredNumber( 2 );
+				uint16_t redValue = GetStoredNumber( 0 );
+				uint16_t greenValue = GetStoredNumber( 1 );
+				uint16_t blueValue = GetStoredNumber( 2 );
 
 				Colour::AddColour( storage.Name, Colour( redValue, greenValue, blueValue ) );
 				cout << "Added colour " << storage.Name << " red " << redValue << " green " << greenValue << " blue " << blueValue << "\n";

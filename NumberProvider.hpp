@@ -17,15 +17,13 @@ namespace Lights
 		inline virtual int32_t Value()
 		{
 			// Does this provider require initialising
-			if ( initialised == false )
+			if ( InitialisationRequired() == false )
 			{
-				Initialise();
-				initialised = true;
-			}
-			// Is this is self triggering then get the next value
-			else if ( selfIncrement == true )
-			{
-				Next();
+				// Is this is self triggering then get the next value
+				if ( selfIncrement == true )
+				{
+					Next();
+				}
 			}
 
 			if ( TraceOn() == true )
@@ -44,9 +42,16 @@ namespace Lights
 		/// @param value 
 		inline virtual void SetValue( int32_t value ) { providedValue = value; }
 
+		/// @brief Set the optional indexer
+		/// @param indexer 
+		inline void Indexer( NumberProvider* indexer ) { indexProvider = indexer; }
+
 	protected:
 
 		/// @brief The value to be returned by this provider
 		int32_t providedValue = 0;
+
+		/// @brief Optional indexer used for direct access
+		NumberProvider* indexProvider = nullptr;
 	};
 }

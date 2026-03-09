@@ -29,6 +29,8 @@ namespace Lights
 				definedProvider->AddValue( static_cast<ColourProvider*>( object )->Value() );
 			}
 
+			definedProvider->Indexer( storage.Value );
+
 			StoreObject( ApplyCommonProviderParameters( definedProvider ), "ColourSequenceProvider" );
 		}
 		else
@@ -56,6 +58,8 @@ namespace Lights
 				{
 					provider->AddValue( static_cast<NumberProvider*>( object )->Value() );
 				}
+
+				provider->Indexer( storage.Value );
 
 				StoreObject( ApplyCommonProviderParameters( provider ), "NumberSequenceProvider" );
 			}
@@ -202,6 +206,8 @@ namespace Lights
 				definedObject->AddValue( static_cast<SegmentProvider*>( object )->Value() );
 			}
 
+			definedObject->Indexer( storage.Value );
+
 			StoreObject( ApplyCommonProviderParameters( definedObject ), "SegmentSequenceProvider" );
 		}
 		else
@@ -249,6 +255,7 @@ namespace Lights
 	/// @return
 	ProviderBase* ObjectParsers::ApplyCommonProviderParameters( ProviderBase* provider )
 	{
+		// Add callbacks for next and reset triggers
 		if ( storage.NextTrigger != nullptr )
 		{
 			storage.NextTrigger->AddCallback( new Callback<ProviderBase>( provider, &ProviderBase::Next ) );

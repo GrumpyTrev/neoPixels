@@ -66,7 +66,5 @@ namespace Lights
 		static Colour Blend(Colour source, Colour destination, uint8_t amount);
 
 		static const Colour InvalidColour;
-
-		static const Colour Black;
 	};
 }

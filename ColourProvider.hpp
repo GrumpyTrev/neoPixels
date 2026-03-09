@@ -1,6 +1,8 @@
 #pragma once
 #include "Colour.hpp"
 #include "ProviderBase.hpp"
+#include "NumberProvider.hpp"
+#include <iostream>
 
 namespace Lights
 {
@@ -12,15 +14,18 @@ namespace Lights
 		inline virtual Colour Value()
 		{
 			// Does this provider require initialising
-			if ( initialised == false )
+			if ( InitialisationRequired() == false )
 			{
-				Initialise();
-				initialised = true;
+				// Is this is self triggering then get the next value
+				if ( selfIncrement == true )
+				{
+					Next();
+				}
 			}
-			// Is this is self triggering then get the next value
-			else if ( selfIncrement == true )
+
+			if ( TraceOn() == true )
 			{
-				Next();
+				cout << "Provider " << Name() << " " << providedValue.value << "\n";
 			}
 
 			return providedValue;
@@ -29,7 +34,14 @@ namespace Lights
 		inline virtual Colour GetValue() { return providedValue; }
 		inline virtual void SetValue( Colour value ) { providedValue = value; }
 
+		/// @brief Set the optional indexer
+		/// @param indexer 
+		inline void Indexer( NumberProvider* indexer ) { indexProvider = indexer; }
+
 	protected:
 		Colour providedValue = Colour::InvalidColour;
+
+		/// @brief Optional indexer used for direct access
+		NumberProvider* indexProvider = nullptr;
 	};
 }
