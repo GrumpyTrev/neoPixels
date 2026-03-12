@@ -13,94 +13,61 @@ namespace Lights
 	{
 		if ( TraceOn() == true )
 		{
-			cout << TimeDisplay() << "Block " << Name() << " executing. Op count " << operationCount << "\n";
+			cout << "Block " << Name() << " entry " << StateToString() << '\n';
 		}
 
-		bool stillExecuting = false;
-
-		// If this block has just finished its post operation delay then do nothing
-		if (postOperationDelaying == true)
+		// Processing is controlled by the execution state of the block
+		if ( state == Terminating )
 		{
-			postOperationDelaying = false;
+			state = Idle;
 		}
 		else
 		{
-			// If this is the first time the Block has been run then execute all the parallel items,
-			// initialise the first sequential item and schedule it for execution
-			if (firstExecution == true)
+			if ( state == Idle )
 			{
-				if ( TraceOn() == true )
-				{
-					cout << TimeDisplay() << "Block " << Name() << " parallel " << parallelItems.size()
-						 << " sequential " << sequenceItems.size() << "\n";
-				}
 				FirstExecution();
 			}
 
-			// If this Block has an execution time, check that the time has not expired
-			if ((executionTimer == nullptr) || (time_reached(timeLimit) == false))
+			// The state may have changed to Running, so have a separate if here
+			if ( state == Running )
 			{
-				// Either no execution time or not reached yet.
 				// Run any items that can be run at this time
 				ExecuteRunnableItems();
-			}
-			else
-			{
-				// No more time for this Block to run. Clear the runnable items
-				runningItems.clear();
-			}
 
-			// If there is an item to execute then use its delay time as the delay time for this block
-			ExecutableItem *nextItemToRun = ItemWithShortestDelay();
-			if (nextItemToRun != nullptr)
-			{
-				delayTime = nextItemToRun->DelayTime();
-
-				stillExecuting = true;
-			}
-			else
-			{
-				// If this Block has a post-operation delay then use it now
-				if (postDelayer != nullptr)
+				// If there is an item to execute then use its delay time as the delay time for this block
+				ExecutableItem* nextItemToRun = ItemWithShortestDelay();
+				if ( nextItemToRun != nullptr )
 				{
-					delayTime = make_timeout_time_ms(postDelayer->Value());
-
-					// Keep track that this Block is in its post operation delay
-					postOperationDelaying = true;
-
-					stillExecuting = true;
-				}
-			}
-
-			if ( TraceOn() == true )
-			{
-				if (stillExecuting == true)
-				{
-					int64_t delayInMs = absolute_time_diff_us( get_absolute_time(), delayTime ) / 1000;
-					if (nextItemToRun != nullptr)
-					{
-						cout << TimeDisplay() << "Block " << Name() << " finished. Op count " << operationCount << " Item post delay " << delayInMs << "\n";
-					}
-					else
-					{
-						cout << TimeDisplay() << "Block " << Name() << " finished. Op count " << operationCount << " Block post delay " << delayInMs << "\n";
-					}
+					delayTime = nextItemToRun->DelayTime();
 				}
 				else
 				{
-					cout << TimeDisplay() << "Block " << Name() << " finished. Op count " << operationCount << " No post delay\n";
+					// If this Block has a post-operation delay then use it now
+					if ( postDelayer != nullptr )
+					{
+						delayTime = make_timeout_time_ms( postDelayer->Value() );
+
+						state = Terminating;
+					}
+					else
+					{
+						state = Idle;
+					}
 				}
 			}
 		}
 
-		return stillExecuting;
+		if ( TraceOn() == true )
+		{
+			cout << "Block " << Name() << " exit " << StateToString() << '\n';
+		}
+
+		return ( state != Idle );
 	}
 
 	/// @brief Called when a Block is first executed.
 	void Block::FirstExecution()
 	{
-		firstExecution = false;
-
 		// Make sure there are no running items left over from when this block was last run
 		runningItems.clear();
 
@@ -108,17 +75,27 @@ namespace Lights
 		operationCount = 0;
 		sequentialItemIndex = 0;
 
-		// Run all the parallel items for the first time
-		for (auto &parallelItem : parallelItems)
+		// Determine the type of execution control being used
+		DetermineControlType();
+
+		// The parallel items are executed whatever type of control is being used
+		for ( auto& parallelItem : parallelItems )
 		{
-			RunParallelItem(parallelItem);
+			RunParallelItem( parallelItem );
 		}
 
-		// If there are any sequential items then pick the first one to run
-		if (sequenceItems.size() > 0)
+		// Only execute any sequential items if Count > 0 or While == true
+		if ( sequenceItems.size() > 0 )
 		{
-			ScheduleSequentialItem(sequenceItems.at(sequentialItemIndex));
+			if ( ( ( control == Count ) && ( countLimit > 0 ) ) ||
+				( ( control == While ) && ( whileProvider->Value() > 0 ) ) )
+			{
+				ScheduleSequentialItem( sequenceItems.at( sequentialItemIndex ) );
+			}
 		}
+
+		// Change the state to Running, even if this may be changed due to there being no runnable items
+		state = Running;
 	}
 
 	/// @brief Run any items in the runnable list
@@ -170,23 +147,21 @@ namespace Lights
 		sequentialItemIndex = 0;
 		operationCount++;
 
-		// If this is not a timed execution then check whether the execution count
-		// has been exceeded
-		uint16_t countLimit = ( counter != nullptr ) ? counter->Value() : 1;
+		if ( TraceOn() == true )
+		{
+			cout << "Block " << Name() << " end of sequence with operationCount " << operationCount << '\n';
+		}
 
-		if ((executionTimer == nullptr) && (operationCount >= countLimit))
+		// Check if execution should be terminated here
+		if ( ( ( control == Count ) && ( operationCount == countLimit ) ) ||
+			( ( control == While ) && ( whileProvider->Value() <= 0 ) ) ||
+			( ( control == Timer ) && ( time_reached( timeLimit ) == true ) ) )
 		{
 			// Execution count exceeded. Clear the runnable items
 			runningItems.clear();
 		}
 		else
 		{
-			// If there is a timer then just reset the execution count when it is exceeded
-			if ((executionTimer != nullptr) && (operationCount >= countLimit))
-			{
-				operationCount = 0;
-			}
-
 			// As this is the start of the sequence then run any parallel
 			// items synchronised with the start of the sequence
 			ExecuteStartSynchronisedItems();
@@ -322,6 +297,42 @@ namespace Lights
 			if ((parallelItem->ItemSynch() == parallelStart) || (parallelItem->ItemSynch() == parallelBoth))
 			{
 				RunParallelItem(parallelItem);
+			}
+		}
+	}
+
+	/// @brief Work out from the supplied parameter the type of control used for this block
+	void Block::DetermineControlType()
+	{
+		if ( whileProvider != nullptr )
+		{
+			// The While control is evaluated when required
+			control = While;
+
+			if ( TraceOn() == true )
+			{
+				cout << "Block " << Name() << " control is While" << '\n';
+			}
+		}
+		else if ( counter != nullptr )
+		{
+			// The Count value is set at initialisation
+			control = Count;
+			countLimit = max( counter->Value(), int32_t( 0 ) );
+
+			if ( TraceOn() == true )
+			{
+				cout << "Block " << Name() << " control is Count " << countLimit << '\n';
+			}
+		}
+		else if ( executionTimer != nullptr )
+		{
+			// The timeLimit has been set by the base class
+			control = Timer;
+
+			if ( TraceOn() == true )
+			{
+				cout << "Block " << Name() << " control is Timer " << '\n';
 			}
 		}
 	}

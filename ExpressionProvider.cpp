@@ -95,6 +95,14 @@ namespace Lights
                         case ExpressionOperator::multiply:
                             result = operand1 * operand2;
                             break;
+
+                        case ExpressionOperator::min:
+                            result = min( operand1, operand2 );
+                            break;
+
+                        case ExpressionOperator::max:
+                            result = max( operand1, operand2 );
+                            break;
                         }
 
                         if ( runtimeError == false )

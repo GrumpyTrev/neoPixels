@@ -7,7 +7,7 @@ namespace Lights
     {
     public:
 
-        /// @brief The possible operator types
+        /// @brief The possible operator/function types
         enum OperatorType
         {
             /// @brief This is an addition operator
@@ -22,6 +22,10 @@ namespace Lights
             self,
             /// @brief Logical Not operator
             logicNot,
+            /// @brief Minimum of two numbers
+            min,
+            /// @brief Maximum of two numbers
+            max,
         };
 
         /// @brief Create an ExpressionOperator with the specfied type

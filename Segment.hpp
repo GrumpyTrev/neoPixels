@@ -19,8 +19,9 @@ namespace Lights
 		void Fill( Colour colour, uint16_t first, uint16_t count );
 		inline void Fill(Colour colour) { Fill(colour, 0, numLeds); };
 		inline uint16_t NumLeds() { return numLeds; };
-		inline LedStrip *Target() { return targetStrip; };
-		void Shift();
+		inline LedStrip* Target() { return targetStrip; };
+		inline void Shift() { Shift( numLeds ); }
+		void Shift( uint16_t ledsToShift );
 
 	protected:
 		uint16_t numLeds;

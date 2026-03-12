@@ -69,10 +69,11 @@ namespace Lights
 		objectStorage.AddObject( "add", new ExpressionOperator( ExpressionOperator::add ) );
 		objectStorage.AddObject( "sub", new ExpressionOperator( ExpressionOperator::subtract ) );
 		objectStorage.AddObject( "div", new ExpressionOperator( ExpressionOperator::divide ) );
-		objectStorage.AddObject( "div", new ExpressionOperator( ExpressionOperator::divide ) );
 		objectStorage.AddObject( "mul", new ExpressionOperator( ExpressionOperator::multiply ) );
 		objectStorage.AddObject( "self", new ExpressionOperator( ExpressionOperator::self ) );
 		objectStorage.AddObject( "not", new ExpressionOperator( ExpressionOperator::logicNot ) );
+		objectStorage.AddObject( "min", new ExpressionOperator( ExpressionOperator::min ) );
+		objectStorage.AddObject( "max", new ExpressionOperator( ExpressionOperator::max ) );
 	}
 
 	/// @brief Find a parser for the specified type and run it

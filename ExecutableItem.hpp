@@ -36,6 +36,7 @@ namespace Lights
 		inline void Counter(NumberProvider *provider) { counter = provider; }
 		inline void ExecutionTime(NumberProvider *provider) { executionTimer = provider; }
 		inline void PostDelay(NumberProvider *provider) { postDelayer = provider; }
+		inline void While( NumberProvider* provider ) { whileProvider = provider; }
 
 		/// @brief What type of parallelism does this Item support
 		enum SynchType
@@ -87,10 +88,19 @@ namespace Lights
 		/// @brief Optional one-off initialisation
 		inline virtual void OneOffInitialisation() {};
 
+		/// @brief Determine whether or not item is currently enabled
+		/// @return 
+		bool inline ExecutionAllowed()
+		{
+			// The operation is allowed if there is no while condition, or if the condition is true
+			return ( whileProvider == nullptr ) || ( whileProvider->Value() > 0 );
+		}
+
 		/// @brief Optional providers for post-operation delay, execution time and count
-		NumberProvider *postDelayer = nullptr;
-		NumberProvider *executionTimer = nullptr;
-		NumberProvider *counter = nullptr;
+		NumberProvider* postDelayer = nullptr;
+		NumberProvider* executionTimer = nullptr;
+		NumberProvider* counter = nullptr;
+		NumberProvider* whileProvider = nullptr;
 
 		/// @brief Flag controlling one-off initialisation
 		bool initialised = false;

@@ -15,9 +15,9 @@ namespace Lights
 		}
 	}
 
-	void Segment::Shift()
+	void Segment::Shift( uint16_t ledsToShift )
 	{
-		for ( uint16_t index = numLeds - 1; index > 0; index-- )
+		for ( uint16_t index = ledsToShift - 1; index > 0; index-- )
 		{
 			SetPixelColour(index, PixelColour(index - 1));
 		}

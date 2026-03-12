@@ -35,5 +35,8 @@ namespace Lights
 
 		/// @brief A counter that can be used by the Action to control its actions
 		uint16_t stepCount = 0;
+
+		/// @brief The count limit for this Action, determined at first execution
+		uint16_t countLimit = 0;
 	};
 }

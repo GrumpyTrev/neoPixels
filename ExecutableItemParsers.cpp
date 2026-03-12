@@ -22,12 +22,10 @@ namespace Lights
 		else
 		{
 			SetAction* definedAction = new SetAction();
-			ApplyCommonItemParameters( definedAction );
 			definedAction->Provider( storage.Colour );
 			definedAction->LedProvider( storage.Led );
-			definedAction->WhileProvider( storage.While );
 			definedAction->FillWithSingleColour( GetStoredBoolean( false, storage.FillFlag ) );
-			StoreObject( definedAction, "SetAction" );
+			StoreObject( ApplyCommonItemParameters( definedAction ), "SetAction" );
 		}
 	};
 
@@ -36,7 +34,9 @@ namespace Lights
 	/// @return
 	void ObjectParsers::MakeShiftAction()
 	{
-		StoreObject( ApplyCommonItemParameters( new ShiftAction() ), "ShiftAction" );
+		ShiftAction* definedAction = new ShiftAction();
+		definedAction->LedProvider( storage.Led );
+		StoreObject( ApplyCommonItemParameters( definedAction ), "ShiftAction" );
 	};
 
 	/// @brief Parse a FadeAction definition
@@ -77,14 +77,13 @@ namespace Lights
 		if ( storage.CheckObjectsType<ExecutableItem>() == true )
 		{
 			Block* definedBlock = new Block();
-			ApplyCommonItemParameters( definedBlock );
 
 			for ( BaseDefinedObject* object : storage.Objects )
 			{
 				definedBlock->AddItem( static_cast<ExecutableItem*>( object )->Clone() );
 			}
 
-			StoreObject( definedBlock, "Block" );
+			StoreObject( ApplyCommonItemParameters( definedBlock ), "Block" );
 		}
 		else
 		{
@@ -102,6 +101,7 @@ namespace Lights
 		item->ExecutionTime( storage.Time );
 		item->PostDelay( storage.Delay );
 		item->Segment( storage.Segment );
+		item->While( storage.While );
 		item->ItemSynch( GetStoredSynchType( ExecutableItem::sequential, storage.ExecutionType ) );
 		item->DefaultSegment( static_cast<SegmentProvider*>( objectStorage.GetObject( "fullSegment" ) ) );
 

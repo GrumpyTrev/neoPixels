@@ -24,6 +24,7 @@ namespace Lights
 		itemSynch = rhs.itemSynch;
 		itemSegment = rhs.itemSegment;
 		defaultSegment = rhs.defaultSegment;
+		whileProvider = rhs.whileProvider;
 	}
 
 	/// @brief Initialise the Item prior to execution

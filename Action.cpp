@@ -20,6 +20,8 @@ namespace Lights
 		{
 			operationCount = 0;
 		}
+
+		countLimit = max( int( ( counter != nullptr ) ? counter->Value() : 1 ), 0 );
 	}
 
 	/// @brief Execute the operation associated with this Action
@@ -32,9 +34,6 @@ namespace Lights
 
 		// Save the step count so it can be accessed by derived classes
 		stepCount = count;
-
-		// Determine the possibly dynamic execution count
-		uint16_t countLimit = ( counter != nullptr ) ? counter->Value() : 1;
 
 		// If there is no post-operation delay, then just perform the operation the required number
 		// of times

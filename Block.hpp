@@ -42,7 +42,7 @@ namespace Lights
 
 	protected:
 		/// @brief Initialise the Block
-		inline void InitialiseItem() { firstExecution = true; }
+		inline void InitialiseItem() { state = Idle; }
 
 	private:
 		/// @brief Called when a Block is first executed.
@@ -77,7 +77,17 @@ namespace Lights
 
 		/// @brief Initialise and then schedule a sequential item
 		/// @param itemToRun
-		void ScheduleSequentialItem(ExecutableItem *itemToRun);
+		void ScheduleSequentialItem( ExecutableItem* itemToRun );
+
+		/// @brief Determine the type of control used for this block
+		void DetermineControlType();
+
+		/// @brief Output the current execution state
+		/// @return 
+		inline string StateToString()
+		{
+			return ( state == Idle ) ? "Idle" : ( state == Running ) ? "Running" : "Terminating";
+		}
 
 		/// @brief The Items to run in sequence
 		vector<ExecutableItem *> sequenceItems;
@@ -88,13 +98,32 @@ namespace Lights
 		/// @brief The Items currently running
 		vector<ExecutableItem *> runningItems;
 
-		/// @brief Flag set to indicate that this is the first time this block has been executed
-		bool firstExecution = true;
-
 		/// @brief The index of the sequential items currently being executed
 		uint16_t sequentialItemIndex = 0;
 
-		/// @brief Flag used to indicate when this block is using its post operational delay
-		bool postOperationDelaying = false;
+		/// @brief The count limit for this block, determined at first execution, defaults to 1
+		uint16_t countLimit = 1;
+
+		/// @brief The states that this block cen be in
+		enum BlockStateType
+		{
+			Idle,
+			Running,
+			Terminating
+		};
+
+		/// @brief The execution state of this block
+		BlockStateType state = Idle;
+
+		/// @brief The types of execution control
+		enum ControlType
+		{
+			While,
+			Timer,
+			Count
+		};
+
+		/// @brief The type of execution control
+		ControlType control = Count;
 	};
 }

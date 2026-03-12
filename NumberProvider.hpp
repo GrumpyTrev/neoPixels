@@ -26,11 +26,6 @@ namespace Lights
 				}
 			}
 
-			if ( TraceOn() == true )
-			{
-				cout << "Provider " << Name() << " " << providedValue << "\n";
-			}
-
 			return providedValue;
 		}
 

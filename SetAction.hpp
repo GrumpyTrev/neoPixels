@@ -30,7 +30,6 @@ namespace Lights
 
 		/// @brief Allow the While NumberProvider to be specified
 		/// @param provider
-		inline void WhileProvider( NumberProvider* provider ) { whileProvider = provider; }
 
 		/// @brief Set the fillWithSingleColour flag
 		/// @param value 
@@ -49,7 +48,7 @@ namespace Lights
 				// Should the same colour be used for all the LEDs
 				if ( fillWithSingleColour == true )
 				{
-					if ( CanSet() == true )
+					if ( ExecutionAllowed() == true )
 					{
 						segment->Fill( actionColourProvider->Value() );
 					}
@@ -59,7 +58,7 @@ namespace Lights
 					// Don't use Fill here as we want to call the colour provider for each pixel
 					for ( uint16_t index = 0; index < segment->NumLeds(); index++ )
 					{
-						if ( CanSet() == true )
+						if ( ExecutionAllowed() == true )
 						{
 							segment->SetPixelColour( index, actionColourProvider->Value() );
 						}
@@ -68,7 +67,7 @@ namespace Lights
 			}
 			else
 			{
-				if ( CanSet() == true )
+				if ( ExecutionAllowed() == true )
 				{
 					int32_t ledNumber = ledNumberProvider->Value();
 					Colour ledColour = actionColourProvider->Value();
@@ -86,19 +85,10 @@ namespace Lights
 
 	private:
 
-		/// @brief Determine whether or not the set operation is currently enabled
-		/// @return 
-		bool inline CanSet()
-		{
-			// The operation is allowed if there is no while condition, or if the condition is true
-			return ( whileProvider == nullptr ) || ( whileProvider->Value() > 0 );
-		}
+
 
 		/// @brief A NumberProvider used to provide the Led number
 		NumberProvider* ledNumberProvider = nullptr;
-
-		/// @brief Provider determining whether or not the set action should be carried out
-		NumberProvider* whileProvider = nullptr;
 
 		/// @brief A flag used to determine whether or not a single colour should be used when setting the 
 		/// entire segment
